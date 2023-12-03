@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky install",
     "release": "standard-version",
-    "affix": "npm run release && git push --follow-tags nestjs-study main"
+    "affix": "npm run release && git push --follow-tags blog-back main"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -33,7 +33,11 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "@nestjs/typeorm": "^10.0.1",
+    "svg-captcha": "^1.4.0",
+    "express-session": "^1.17.3"
+    
   },
   "repository": {
     "url": "https://github.com/YuluoY/mood-blog-back"

@@ -2,7 +2,7 @@
  * @Author: yuluo 568055454@qq.com
  * @Date: 2023-12-03 23:21:33
  * @LastEditors: yuluo 568055454@qq.com
- * @LastEditTime: 2023-12-03 23:40:07
+ * @LastEditTime: 2023-12-04 00:38:49
  * @FilePath: \mood-blog-back\src\plugin\AutoExportModule.ts
  * @Description: 自动导出模块
  *
@@ -24,6 +24,7 @@ class AutoExportModule {
   }
 
   public async getModules(): Promise<any> {
+    console.log(this.scanPath, this.reg);
     const modules = await import(this.scanPath);
     const keys = Object.keys(modules);
     const modulesMap = new Map();
