@@ -1,3 +1,3 @@
-import { UserModule } from './user/user.module';
+import { UserModule } from '@/modules/user/user.module';
 
 export default [UserModule];

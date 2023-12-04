@@ -12,5 +12,7 @@
   "jsxSingleQuote": false,
   "insertPragma": false,
   "quoteProps": "as-needed",
-  "trailingComma": "none"
+  "trailingComma": "none",
+  "array-bracket-newline": "always",
+  "array-bracket-spacing": "always"
 }
