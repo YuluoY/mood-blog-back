@@ -11,6 +11,7 @@ import { HttpFilter } from './interceptor/HttpFilter';
 import { Response } from './interceptor/Response';
 import { ValidationPipe } from '@nestjs/common';
 import { RoleGuard } from './interceptor/Role.guard';
+import { AppConfig } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -19,7 +20,7 @@ async function bootstrap() {
   app.use(cors());
 
   // 使用静态目录。src/public下的所有文件都可以直接访问
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.useStaticAssets(AppConfig.server.staticPath);
 
   // 全局注册异常过滤器
   app.useGlobalFilters(new HttpFilter());

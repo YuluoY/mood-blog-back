@@ -10,7 +10,7 @@
   "endOfLine": "auto",
   "htmlWhitespaceSensitivity": "ignore",
   "jsxSingleQuote": false,
-  "trailingComma": "es5",
   "insertPragma": false,
-  "quoteProps": "as-needed"
+  "quoteProps": "as-needed",
+  "trailingComma": "none"
 }

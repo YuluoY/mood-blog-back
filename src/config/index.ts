@@ -1,9 +1,10 @@
 import { resolve } from 'path';
 
 export const AppConfig = {
-  // 服务器配置
+  // 服务端配置
   server: {
     port: 3000,
+    staticPath: resolve(__dirname, '../..', 'public'),  // 静态资源目录
   },
   // swagger配置
   swagger: {
@@ -27,6 +28,6 @@ export const AppConfig = {
     retryAttempts: 1, // 重连的次数
     autoLoadEntities: true, // 自动加载实体，forFeature()方法注册的每个实体都将自动添加到配置对象的实体类中
     logging: true,
-    maxQueryExecutionTime: 1,
+    maxQueryExecutionTime: 1
   },
 };
