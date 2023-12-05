@@ -5,13 +5,14 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cors from 'cors';
-import { join } from 'path';
 import Swagger from './plugin/Swagger';
-import { HttpFilter } from './interceptor/HttpFilter';
-import { Response } from './interceptor/Response';
+import { HttpFilter } from './common/HttpFilter';
+import { Response } from './common/Response';
 import { ValidationPipe } from '@nestjs/common';
-import { RoleGuard } from './interceptor/Role.guard';
+import { RoleGuard } from './common/Role.guard';
 import { AppConfig } from './config';
+import { AuthGuard } from './common/Auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -32,7 +33,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   // 全局权限守卫
-  app.useGlobalGuards(new RoleGuard(new Reflector()));
+  // new AuthGuard(new JwtService(), new Reflector())
+  app.useGlobalGuards(new AuthGuard(new JwtService(), new Reflector()), new RoleGuard(new Reflector()));
 
   // 接口文档生成
   Swagger.install(app);

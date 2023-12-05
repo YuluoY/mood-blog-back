@@ -1,21 +1,23 @@
 import { AppConfig } from 'src/config';
-import { BaseEntity } from 'src/entity/BaseEntity';
+import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
 import { EnumDatabaseTableName } from 'src/types/core';
 import { EnumRole, EnumStatus } from 'src/types/user';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.User)
-export class User extends BaseEntity {
+export class User extends CustomBaseEntity {
   @Column({
     type: 'varchar',
     comment: '用户名',
     unique: true,
     nullable: true
   })
+  @Index()
   username?: string;
 
   @Column({
     type: 'varchar',
+    select: false,
     comment: '密码',
     nullable: false
   })
@@ -28,6 +30,7 @@ export class User extends BaseEntity {
     nullable: false,
     unique: true
   })
+  @Index()
   email?: string;
 
   @Column({
@@ -128,7 +131,8 @@ export class User extends BaseEntity {
   @Column({
     type: 'timestamp',
     comment: '最后登录时间',
-    nullable: true
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP'
   })
   lastLoginAt?: Date | null;
 }

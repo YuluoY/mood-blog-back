@@ -4,17 +4,12 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfig } from './config';
 import modules from './modules';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [
-    ...modules,
-    TypeOrmModule.forRoot(AppConfig.orm as any),
-    PassportModule,
-    JwtModule.register(AppConfig.plugin.jwt as any)
-  ],
+  imports: [...modules, TypeOrmModule.forRoot(AppConfig.orm), JwtModule.register(AppConfig.plugin.jwt)],
   controllers: [AppController],
-  providers: [AppService, JwtService]
+  providers: [AppService],
+  exports: [AppService]
 })
 export class AppModule {}

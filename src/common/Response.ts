@@ -15,7 +15,7 @@ export class Response<T> implements NestInterceptor {
         return {
           code: 200,
           data,
-          success: true,
+          success: true
         };
       })
     );
