@@ -13,9 +13,13 @@ import { RoleGuard } from './common/Role.guard';
 import { AppConfig } from './config';
 import { AuthGuard } from './common/Auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // session 验证码注入
+  app.use(session(AppConfig.plugin.session));
 
   // 跨域
   app.use(cors());

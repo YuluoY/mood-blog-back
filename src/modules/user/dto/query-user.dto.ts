@@ -12,4 +12,7 @@ export class QueryUserDto {
 
   @IsOptional()
   phone?: string;
+
+  @IsOptional()
+  password?: string;
 }

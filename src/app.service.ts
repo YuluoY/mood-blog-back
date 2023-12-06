@@ -11,7 +11,7 @@ export class AppService {
     return await this.jwtService.signAsync(payload);
   }
 
-  getCode(options: svgCaptcha.ConfigObject): svgCaptcha.CaptchaObj {
+  getCode(options?: svgCaptcha.ConfigObject): svgCaptcha.CaptchaObj {
     const defaultOptions = AppConfig.plugin.svgCaptcha;
     const optionsMerge = Object.assign(defaultOptions, options);
     const captcha = svgCaptcha.create(optionsMerge);

@@ -2,7 +2,7 @@ import { AppConfig } from 'src/config';
 import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
 import { EnumDatabaseTableName } from 'src/types/core';
 import { EnumRole, EnumStatus } from 'src/types/user';
-import { Column, Entity, Index } from 'typeorm';
+import { BeforeUpdate, Column, Entity, Index } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.User)
 export class User extends CustomBaseEntity {
@@ -135,4 +135,9 @@ export class User extends CustomBaseEntity {
     default: () => 'CURRENT_TIMESTAMP'
   })
   lastLoginAt?: Date | null;
+
+  @BeforeUpdate()
+  updateDate() {
+    this.updatedAt = new Date();
+  }
 }

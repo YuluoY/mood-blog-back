@@ -19,6 +19,10 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
   },
+  "include": [
+    "src/**/*.ts",
+    "src/i18n/**/*.json"
+  ]
 }

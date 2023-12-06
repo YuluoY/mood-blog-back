@@ -11,3 +11,13 @@ export enum EnumRole {
   User = 'user', // 普通用户
   VipUser = 'vipUser' // VIP用户
 }
+
+export interface ITokenUser {
+  id: string;
+  username: string;
+  email: string;
+  role: EnumRole;
+  iat: number;
+  exp: number;
+  [key: string]: any;
+}

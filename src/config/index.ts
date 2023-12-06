@@ -1,11 +1,15 @@
 import { JwtModuleOptions } from '@nestjs/jwt';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { SessionOptions } from 'express-session';
+import { AcceptLanguageResolver, I18nOptions, QueryResolver } from 'nestjs-i18n';
 import { resolve } from 'path';
 import * as svgCaptcha from 'svg-captcha';
 
 export interface IAppConfigPlugin {
   svgCaptcha: svgCaptcha.ConfigObject;
   jwt: JwtModuleOptions;
+  session: SessionOptions;
+  i18n: I18nOptions;
 }
 
 export interface IAppConfigServer {
@@ -67,18 +71,34 @@ export const AppConfig: IAppConfig = {
     retryAttempts: 1, // 重连的次数
     autoLoadEntities: true, // 自动加载实体，forFeature()方法注册的每个实体都将自动添加到配置对象的实体类中
     logging: true,
+    // logger: new CustomLogger(),
     // timezone: 'Asia/Shanghai',
     maxQueryExecutionTime: 1
   },
   // 插件/第三方库的配置
   plugin: {
+    session: {
+      secret: 'huyongle,2023-11-27',
+      rolling: true,
+      name: 'yuluo.sid',
+      cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 },
+      resave: false
+    },
+    i18n: {
+      fallbackLanguage: 'zh',
+      loaderOptions: {
+        path: resolve(__dirname, '..', 'i18n'),
+        watch: true
+      },
+      resolvers: [{ use: QueryResolver, options: ['lang'] }, AcceptLanguageResolver]
+    },
     svgCaptcha: {
       size: 4, // 验证码长度
       ignoreChars: '0o1i', // 验证码字符中排除 0o1i
-      noise: 2, // 干扰线条的数量
+      noise: 0, // 干扰线条的数量
       color: true, // 验证码的字符是否有颜色，默认没有，如果设定了背景，则默认有
       background: '#cc9966', // 验证码图片背景颜色
-      width: 160, // width of captcha
+      width: 100, // width of captcha
       height: 30, // height of captcha
       fontSize: 50 // captcha text size
     },

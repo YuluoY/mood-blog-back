@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Inject, Module } from '@nestjs/common';
 import { Response } from 'express';
 
 // 异常拦截器
