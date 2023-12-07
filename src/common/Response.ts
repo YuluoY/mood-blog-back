@@ -1,15 +1,17 @@
-import { CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 interface Data<T> {
+  code: number;
   data: T;
+  success: boolean;
 }
 
 // 响应拦截器根据模板返回数据
 @Injectable()
 export class Response<T> implements NestInterceptor {
-  intercept(context: any, next: CallHandler): Observable<Data<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<Data<T>> {
     return next.handle().pipe(
       map((data) => {
         return {

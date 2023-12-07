@@ -14,6 +14,7 @@ import { AppConfig } from './config';
 import { AuthGuard } from './common/Auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import * as session from 'express-session';
+import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -38,7 +39,10 @@ async function bootstrap() {
 
   // 全局权限守卫
   // new AuthGuard(new JwtService(), new Reflector())
-  app.useGlobalGuards(new AuthGuard(new JwtService(), new Reflector()), new RoleGuard(new Reflector()));
+  app.useGlobalGuards(
+    new AuthGuard(new JwtService(), new Reflector()),
+    new RoleGuard(new Reflector())
+  );
 
   // 接口文档生成
   Swagger.install(app);

@@ -34,7 +34,6 @@ export interface IAppConfig {
   orm: TypeOrmModuleOptions;
   plugin: IAppConfigPlugin;
 }
-
 export const AppConfig: IAppConfig = {
   // 服务端配置
   server: {
@@ -43,9 +42,9 @@ export const AppConfig: IAppConfig = {
     // 静态资源目录
     staticPath: resolve(__dirname, '../..', 'public'),
     // 默认头像
-    defaultAvatar: `http://${process.env.HOST}:${process.env.PORT}/public/avatar.jpg`,
+    defaultAvatar: `//${process.env.HOST}:3000/avatar.png`,
     // 默认封面
-    defaultCover: `http://${process.env.HOST}:${process.env.PORT}/public/cover.jpg`,
+    defaultCover: `//${process.env.HOST}:3000/cover.png`,
     // 默认简介
     defaultBio: '这个人很懒，什么都没有留下'
   },
@@ -100,7 +99,7 @@ export const AppConfig: IAppConfig = {
       background: '#cc9966', // 验证码图片背景颜色
       width: 100, // width of captcha
       height: 30, // height of captcha
-      fontSize: 50 // captcha text size
+      fontSize: 30 // captcha text size
     },
     jwt: {
       global: true, // 是否在全局范围内使用模块

@@ -1,6 +1,6 @@
 import { AppConfig } from 'src/config';
 import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
-import { EnumDatabaseTableName } from 'src/types/core';
+import { EnumDatabaseTableName, IUserSocializes } from 'src/types/core';
 import { EnumRole, EnumStatus } from 'src/types/user';
 import { BeforeUpdate, Column, Entity, Index } from 'typeorm';
 
@@ -90,12 +90,11 @@ export class User extends CustomBaseEntity {
   role?: EnumRole;
 
   @Column({
-    type: 'varchar',
-    length: 200,
-    comment: '个人网站',
+    type: 'jsonb',
+    comment: '社交网站',
     nullable: true
   })
-  website?: string;
+  socializes?: IUserSocializes[];
 
   @Column({
     type: 'varchar',
@@ -124,9 +123,12 @@ export class User extends CustomBaseEntity {
   @Column({
     type: 'text',
     comment: '用户权限',
+    select: false,
     nullable: true
   })
   token?: string;
+
+  ctoken?: string;
 
   @Column({
     type: 'timestamp',

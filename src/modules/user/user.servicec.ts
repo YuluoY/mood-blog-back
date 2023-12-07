@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -6,6 +6,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { AppService } from 'src/app.service';
 import { I18nService } from 'nestjs-i18n';
+import { IFindOneServiceOptions } from '@/types/core';
+import { Response } from 'express';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -33,29 +36,39 @@ export class UserService {
     }
   }
 
-  async findOne(queryUserDto: QueryUserDto, options?: { refreshToken: boolean }) {
-    if (!options.refreshToken) {
-      try {
-        const user = await this.userManager.findOne({ where: queryUserDto });
+  async findOne(queryUserDto: QueryUserDto, { refreshToken, res, session }: IFindOneServiceOptions = {}) {
+    try {
+      return await this.userManager.manager.transaction(async (manager: EntityManager) => {
+        const user = await manager.findOne(User, { where: queryUserDto });
+        // 如果没有传refreshToken，则直接返回user，表示只是查询用户是否存在
+        if (!refreshToken) return user;
+
+        if (!user) throw new HttpException(this.i18n.t('error.user.noFound'), HttpStatus.BAD_REQUEST);
+        const token = await this.updateToken(manager, user);
+        await manager.update(User, { id: user.id }, { lastLoginAt: new Date() });
+        if (res) {
+          // 将最新的token存入cookie中
+          this.saveTokenToCookie(res, token);
+          session.csrfToken = randomBytes(32).toString('hex');
+        }
         return user;
-      } catch (error) {
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-      }
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    return await this.userManager.manager.transaction(async (manager: EntityManager) => {
-      const user = await manager.findOne(User, { where: queryUserDto });
-      if (!user) throw new HttpException(this.i18n.t('error.user.noFound'), HttpStatus.BAD_REQUEST);
-      user.token = await this.updateToken(manager, user);
-      return user;
-    });
   }
 
-  findAll() {
-    // throw new Error('Method not implemented.');
-    return this.userManager.find();
+  async findAll() {
+    return await this.userManager.find();
   }
 
-  private async updateToken(manager: EntityManager, user: User) {
+  /**
+   * @description: 更新token
+   * @param {EntityManager} manager 数据库管理器
+   * @param {User} user 用户实体
+   * @return {Promise<string>} token
+   */
+  private async updateToken(manager: EntityManager, user: User): Promise<string> {
     const token = await this.appService.generateToken({
       id: user.id,
       username: user.username,
@@ -64,5 +77,19 @@ export class UserService {
     });
     await manager.update(User, { id: user.id }, { token });
     return token;
+  }
+
+  /**
+   * @description: 将token存入cookie中
+   * @param {Response} res 响应对象
+   * @param {string} token token
+   * @return {void}
+   */
+  private async saveTokenToCookie(res: Response, token: string) {
+    this.appService.setCookie(res, process.env.COOKIE_TOKEN_NAME, token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      sameSite: 'lax'
+    });
   }
 }

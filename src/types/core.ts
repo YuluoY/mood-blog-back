@@ -1,4 +1,6 @@
 import { Session } from 'express-session';
+import { Response } from 'express';
+import { Hash } from 'crypto';
 
 export enum EnumDatabaseTableName {
   User = 'user',
@@ -11,5 +13,16 @@ export enum EnumDatabaseTableName {
   Router = 'router'
 }
 export interface ExpressSessionPlus extends Session {
-  code: string;
+  code?: string;
+  csrfToken?: string | Hash;
+}
+
+export interface IFindOneServiceOptions {
+  refreshToken?: boolean;
+  res?: Response;
+  session?: ExpressSessionPlus;
+}
+
+export interface IUserSocializes {
+  [key: string]: any;
 }

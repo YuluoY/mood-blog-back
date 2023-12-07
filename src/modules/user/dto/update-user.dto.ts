@@ -1,7 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsEmail, IsEnum, IsNumberString, IsString, IsUUID, IsUrl, IsDateString, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsEnum, IsNumberString, IsString, IsUUID, IsUrl, IsDateString, IsNotEmpty, IsJSON } from 'class-validator';
 import { EnumRole, EnumStatus } from 'src/types/user';
+import { IUserSocializes } from '@/types/core';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsUUID()
@@ -30,7 +31,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   cover?: string;
 
   @IsString()
-  website?: string;
+  socializes?: IUserSocializes[];
 
   @IsString()
   bio?: string;
