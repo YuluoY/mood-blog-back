@@ -1,4 +1,4 @@
-import { CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BeforeUpdate, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export class CustomBaseEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -18,6 +18,11 @@ export class CustomBaseEntity {
     onUpdate: 'CURRENT_TIMESTAMP(6)'
   })
   updatedAt: Date;
+
+  @BeforeUpdate()
+  updateDate() {
+    this.updatedAt = new Date();
+  }
 
   @DeleteDateColumn({
     type: 'timestamp',
