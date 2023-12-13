@@ -4,12 +4,14 @@ import { SessionOptions } from 'express-session';
 import { AcceptLanguageResolver, I18nOptions, QueryResolver } from 'nestjs-i18n';
 import { resolve } from 'path';
 import * as svgCaptcha from 'svg-captcha';
+import * as COS from 'cos-nodejs-sdk-v5';
 
 export interface IAppConfigPlugin {
   svgCaptcha: svgCaptcha.ConfigObject;
   jwt: JwtModuleOptions;
   session: SessionOptions;
   i18n: I18nOptions;
+  cos: COS.COSOptions;
 }
 
 export interface IAppConfigServer {
@@ -65,10 +67,10 @@ export const AppConfig: IAppConfig = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE_NAME,
     entities: [resolve(__dirname, '/**/*.entity{.ts,.js}')],
-    synchronize: true, // 是否自动将实体类同步到数据库，生成环境下不建议使用
-    retryDelay: 500, // 重试连接数据库的间隔
-    retryAttempts: 1, // 重连的次数
-    autoLoadEntities: true, // 自动加载实体，forFeature()方法注册的每个实体都将自动添加到配置对象的实体类中
+    synchronize: true,
+    retryDelay: 500,
+    retryAttempts: 1,
+    autoLoadEntities: true,
     logging: true,
     // logger: new CustomLogger(),
     // timezone: 'Asia/Shanghai',
@@ -79,7 +81,7 @@ export const AppConfig: IAppConfig = {
     session: {
       secret: 'huyongle,2023-11-27',
       rolling: true,
-      name: 'yuluo.sid',
+      name: 'captcha.sid',
       cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 },
       resave: false
     },
@@ -92,21 +94,25 @@ export const AppConfig: IAppConfig = {
       resolvers: [{ use: QueryResolver, options: ['lang'] }, AcceptLanguageResolver]
     },
     svgCaptcha: {
-      size: 4, // 验证码长度
-      ignoreChars: '0o1i', // 验证码字符中排除 0o1i
-      noise: 0, // 干扰线条的数量
-      color: true, // 验证码的字符是否有颜色，默认没有，如果设定了背景，则默认有
-      background: '#cc9966', // 验证码图片背景颜色
-      width: 100, // width of captcha
-      height: 30, // height of captcha
+      size: 4,
+      ignoreChars: '0o1i',
+      noise: 0,
+      color: true,
+      background: '#cc9966',
+      width: 100,
+      height: 30,
       fontSize: 30 // captcha text size
     },
     jwt: {
-      global: true, // 是否在全局范围内使用模块
-      secret: process.env.JWT_SECRET, // 设置用于签名 JWT 的秘钥，请根据实际情况更改
+      global: true,
+      secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: process.env.JWT_EXPIRES_IN // 设置过期时间，单位为秒，可以根据实际需求调整
+        expiresIn: process.env.JWT_EXPIRES_IN
       }
+    },
+    cos: {
+      SecretId: process.env.COS_SECRET_ID,
+      SecretKey: process.env.COS_SECRET_KEY
     }
   }
 };

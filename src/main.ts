@@ -40,7 +40,7 @@ async function bootstrap() {
   // 全局权限守卫
   // new AuthGuard(new JwtService(), new Reflector())
   app.useGlobalGuards(
-    new AuthGuard(new JwtService(), new Reflector()),
+    new AuthGuard(new JwtService(), new Reflector(), new AppService()),
     new RoleGuard(new Reflector())
   );
 

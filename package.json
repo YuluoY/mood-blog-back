@@ -33,6 +33,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
+    "cos-nodejs-sdk-v5": "^2.12.6",
     "dotenv": "^16.3.1",
     "express-session": "^1.17.3",
     "nestjs-i18n": "^10.4.0",

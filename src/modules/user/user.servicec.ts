@@ -7,7 +7,7 @@ import { QueryUserDto } from './dto/query-user.dto';
 import { AppService } from 'src/app.service';
 import { I18nService } from 'nestjs-i18n';
 import { IFindOneServiceOptions } from '@/types/core';
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 import { randomBytes } from 'crypto';
 
 @Injectable()
@@ -48,8 +48,10 @@ export class UserService {
         await manager.update(User, { id: user.id }, { lastLoginAt: new Date() });
         if (res) {
           // 将最新的token存入cookie中
-          this.saveTokenToCookie(res, token);
-          session.csrfToken = randomBytes(32).toString('hex');
+          const time = await this.saveTokenToCookie(res, token);
+          user['expire'] = time;
+          const { iv, encryptedData } = this.appService.encrypt('true', process.env.CSRF_TOKEN_SECRET);
+          user['csrf_token'] = `${encryptedData}-${iv}`;
         }
         return user;
       });
@@ -83,13 +85,15 @@ export class UserService {
    * @description: 将token存入cookie中
    * @param {Response} res 响应对象
    * @param {string} token token
-   * @return {void}
+   * @return {number} 返回当前时间戳
    */
-  private async saveTokenToCookie(res: Response, token: string) {
-    this.appService.setCookie(res, process.env.COOKIE_TOKEN_NAME, token, {
+  private async saveTokenToCookie(res: Response, token: string): Promise<number> {
+    const defualt: CookieOptions = {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      maxAge: 1000 * 60 * 60 * 24 * Number(process.env.COOKIE_TOKEN_EXPIRES_IN),
       sameSite: 'lax'
-    });
+    };
+    this.appService.setCookie(res, process.env.COOKIE_TOKEN_NAME, token, defualt);
+    return Date.now() + defualt.maxAge;
   }
 }
