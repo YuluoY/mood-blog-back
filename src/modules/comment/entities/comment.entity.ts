@@ -1,9 +1,11 @@
 import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
 import { Article } from '@/modules/article/entities/article.entity';
-import { JoinColumn, ManyToOne } from 'typeorm';
+import { EnumDatabaseTableName } from '@/types/core';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 
+@Entity(EnumDatabaseTableName.Comment)
 export class Comment extends CustomBaseEntity {
   @ManyToOne(() => Article, (Article) => Article.comment)
-  @JoinColumn({ name: 'article_id' })
+  @JoinColumn({ name: 'articleId' })
   article: string;
 }

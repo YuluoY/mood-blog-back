@@ -6,7 +6,8 @@ import { Like } from '@/modules/like/entities/like.entity';
 import { User } from '@/modules/user/entities/user.entity';
 import { View } from '@/modules/view/entities/view.entity';
 import { EnumDatabaseTableName } from '@/types/core';
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { EnumStatus } from '@/types/user';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.Article)
 export class Article extends CustomBaseEntity {
@@ -14,7 +15,8 @@ export class Article extends CustomBaseEntity {
     type: 'varchar',
     comment: '文章标题',
     length: 255,
-    nullable: false
+    nullable: false,
+    unique: true
   })
   title: string;
 
@@ -40,15 +42,22 @@ export class Article extends CustomBaseEntity {
   })
   description: string;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
+  @Column({
+    type: 'enum',
+    enum: EnumStatus,
+    comment: '文章状态',
+    default: EnumStatus.Normal // 0 正常 1 禁用 2 删除 3 审核
+  })
+  status: EnumStatus;
+
+  @ManyToOne(() => User, { cascade: true })
   user: User;
 
   @OneToMany(() => View, (View) => View.article)
-  view: View[];
+  view: number;
 
   @OneToMany(() => Like, (Like) => Like.article)
-  like: Like[];
+  like: number;
 
   @ManyToMany(() => Category, (Category) => Category.article)
   category: Category[];
@@ -56,6 +65,6 @@ export class Article extends CustomBaseEntity {
   @OneToMany(() => Comment, (Comment) => Comment.article)
   comment: Comment[];
 
-  @OneToMany(() => File, (File) => File.article)
-  file: File[];
+  // @OneToMany(() => File, (File) => File.article)
+  // file: File[];
 }

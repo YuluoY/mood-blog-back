@@ -1,6 +1,7 @@
 import { Session } from 'express-session';
 import { Response } from 'express';
 import { Hash } from 'crypto';
+import { EnumRole } from './user';
 
 export enum EnumDatabaseTableName {
   User = 'user',
@@ -10,7 +11,9 @@ export enum EnumDatabaseTableName {
   Comment = 'comment',
   Role = 'role',
   Like = 'like',
-  Router = 'router'
+  File = 'file',
+  Router = 'router',
+  View = 'view'
 }
 export interface ExpressSessionPlus extends Session {
   code?: string;
@@ -25,4 +28,26 @@ export interface IFindOneServiceOptions {
 
 export interface IUserSocializes {
   [key: string]: any;
+}
+
+/**
+ * @description: 校验token后返回的对象
+ */
+export interface IParseToken {
+  [key: string]: any;
+  id: string;
+  username: string;
+  role: EnumRole;
+}
+
+/**
+ * @description: 文件上传的基本信息
+ */
+export interface IUploadFile {
+  [key: string]: any;
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
 }

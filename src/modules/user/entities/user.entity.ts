@@ -128,8 +128,6 @@ export class User extends CustomBaseEntity {
   })
   token?: string;
 
-  ctoken?: string;
-
   @Column({
     type: 'timestamp',
     comment: '最后登录时间',

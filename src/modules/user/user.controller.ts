@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, Query, Req, Res, Session } from '@nestjs/common';
-import { UserService } from './user.servicec';
+import { UserService } from './user.service';
 import { EnumDatabaseTableName, ExpressSessionPlus } from 'src/types/core';
 import { QueryUserDto } from './dto/query-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';

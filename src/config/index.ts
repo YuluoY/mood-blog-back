@@ -2,7 +2,7 @@ import { JwtModuleOptions } from '@nestjs/jwt';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SessionOptions } from 'express-session';
 import { AcceptLanguageResolver, I18nOptions, QueryResolver } from 'nestjs-i18n';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import * as svgCaptcha from 'svg-captcha';
 import * as COS from 'cos-nodejs-sdk-v5';
 
@@ -66,7 +66,7 @@ export const AppConfig: IAppConfig = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE_NAME,
-    entities: [resolve(__dirname, '/**/*.entity{.ts,.js}')],
+    entities: [join(__dirname, '..', '/modules/**/*.entity{.ts,.js}')],
     synchronize: true,
     retryDelay: 500,
     retryAttempts: 1,

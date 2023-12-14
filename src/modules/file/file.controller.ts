@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { FileService } from './file.service';
-import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { IParseToken, IUploadFile } from '@/types/core';
+import { Request } from 'express';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post()
-  create(@Body() createFileDto: CreateFileDto) {
-    return this.fileService.create(createFileDto);
+  @UseInterceptors(FileInterceptor('file'))
+  create(@UploadedFile() file: Partial<IUploadFile>, @Req() request: Request & { user: IParseToken }) {
+    return this.fileService.create(file, request.user.id);
   }
 
   @Get()
@@ -27,8 +30,8 @@ export class FileController {
     return this.fileService.update(+id, updateFileDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileService.remove(+id);
+  @Delete(':key')
+  remove(@Param('key') key: string) {
+    return this.fileService.remove(key);
   }
 }

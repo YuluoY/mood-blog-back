@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
     this.verifyCsrfToken(request.headers['x-csrf-token'] as string);
 
     // 获取token，验证用户身份
-    const token = this.appService.getCookie(request, process.env.COOKIE_TOKEN_NAME);
+    const token = this.appService.getCookie(request, process.env.JWT_COOKIE_NAME);
     await this.verifyToken(token, request);
 
     return true;

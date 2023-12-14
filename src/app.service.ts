@@ -31,8 +31,8 @@ export class AppService {
     const cookies = cookiesStr.split(';');
     const cookie = cookies.find((item) => item.includes(key));
     if (!cookie) return;
-    const value = cookie.split('=')[1];
-    return value;
+    const value = cookie.split('=');
+    return value[1];
   }
 
   encrypt(data: string, secretKey: string) {

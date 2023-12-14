@@ -8,7 +8,6 @@ import { AppService } from 'src/app.service';
 import { I18nService } from 'nestjs-i18n';
 import { IFindOneServiceOptions } from '@/types/core';
 import { CookieOptions, Response } from 'express';
-import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -36,7 +35,7 @@ export class UserService {
     }
   }
 
-  async findOne(queryUserDto: QueryUserDto, { refreshToken, res, session }: IFindOneServiceOptions = {}) {
+  async findOne(queryUserDto: QueryUserDto, { refreshToken, res }: IFindOneServiceOptions = {}) {
     try {
       return await this.userManager.manager.transaction(async (manager: EntityManager) => {
         const user = await manager.findOne(User, { where: queryUserDto });
@@ -90,10 +89,10 @@ export class UserService {
   private async saveTokenToCookie(res: Response, token: string): Promise<number> {
     const defualt: CookieOptions = {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * Number(process.env.COOKIE_TOKEN_EXPIRES_IN),
+      maxAge: 1000 * 60 * 60 * 24 * parseInt(process.env.JWT_EXPIRES_IN),
       sameSite: 'lax'
     };
-    this.appService.setCookie(res, process.env.COOKIE_TOKEN_NAME, token, defualt);
+    this.appService.setCookie(res, process.env.JWT_COOKIE_NAME, token, defualt);
     return Date.now() + defualt.maxAge;
   }
 }

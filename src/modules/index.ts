@@ -1,12 +1,12 @@
 import { UserModule } from '@/modules/user/user.module';
-import { ArticleModule } from './article/article.module';
-import { CategoryModule } from './category/category.module';
-import { CommentModule } from './comment/comment.module';
-import { FileModule } from './file/file.module';
-import { FriendModule } from './friend/friend.module';
-import { LikeModule } from './like/like.module';
-import { ShareModule } from './share/share.module';
-import { ViewModule } from './view/view.module';
+import { ArticleModule } from '@/modules/article/article.module';
+import { CategoryModule } from '@/modules/category/category.module';
+import { CommentModule } from '@/modules/comment/comment.module';
+import { FileModule } from '@/modules/file/file.module';
+import { FriendModule } from '@/modules/friend/friend.module';
+import { LikeModule } from '@/modules/like/like.module';
+import { ShareModule } from '@/modules/share/share.module';
+import { ViewModule } from '@/modules/view/view.module';
 
 export default [
   UserModule,

@@ -15,9 +15,14 @@ import { AuthGuard } from './common/Auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import * as session from 'express-session';
 import { AppService } from './app.service';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // 调整请求体的限制大小
+  app.use(express.json({ limit: '1gb' }));
+  app.use(express.urlencoded({ limit: '1gb', extended: true }));
 
   // session 验证码注入
   app.use(session(AppConfig.plugin.session));
