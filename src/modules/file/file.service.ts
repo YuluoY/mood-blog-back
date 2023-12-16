@@ -43,12 +43,20 @@ export class FileService {
         }
         const res = await this.cos.putObject(params);
         const user = await this.userService.findOne({ id: userId });
+
+        let size = (file.size / 1024).toFixed(2) + 'KB';
+        if (file.size / 1024 > 1024) {
+          size = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+        }
+        if (file.size / 1024 / 1024 > 1024) {
+          size = (file.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
+        }
         const createFileDto: Partial<CreateFileDto> = {
           fieldname: file.fieldname,
           originalname: file.originalname,
           mimetype: file.mimetype,
           encoding: file.encoding,
-          size: (file.size / 1024).toFixed(2) + 'KB',
+          size: size,
           url: res.Location,
           key: params.Key,
           bucket: params.Bucket,

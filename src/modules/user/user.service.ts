@@ -107,8 +107,8 @@ export class UserService {
     return {
       list,
       total,
-      page,
-      limit
+      page: +page,
+      limit: +limit
     };
   }
 }

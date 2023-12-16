@@ -6,4 +6,13 @@ export class QueryArticleDto extends QueryBaseDto {
   @IsString()
   @Optional()
   title: string;
+
+  @Optional()
+  userId: string;
+
+  @Optional()
+  articleId: string;
+
+  @Optional()
+  parentId: string;
 }

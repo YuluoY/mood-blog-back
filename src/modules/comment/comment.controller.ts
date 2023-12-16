@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { QueryCommentDto } from '@/modules/comment/dto/query-comment.dto';
 
 @Controller('comment')
 export class CommentController {
@@ -17,18 +18,28 @@ export class CommentController {
     return this.commentService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+  @Get()
+  async findOne(@Query('unique') unique: Partial<QueryCommentDto>) {
+    return await this.commentService.findOne(unique);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+    return this.commentService.update(id, updateCommentDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  @Delete()
+  remove(@Body('id') id: string | string[]) {
+    return this.commentService.remove(id);
+  }
+
+  @Patch('restore')
+  async restore(@Query('id') id: string | string[]) {
+    return await this.commentService.restore(id);
+  }
+
+  @Get('pagination/:page/:limit')
+  async pagination(@Param('page') page: number, @Param('limit') limit: number, @Query() query: QueryCommentDto) {
+    return await this.commentService.pagination(page, limit, query);
   }
 }

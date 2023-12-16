@@ -5,7 +5,6 @@ import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.View)
 export class View extends CustomBaseEntity {
-  @ManyToOne(() => Article)
-  @JoinColumn({ name: 'articleId' })
-  article: string;
+  @ManyToOne(() => Article, (Article) => Article.views)
+  article: Article;
 }

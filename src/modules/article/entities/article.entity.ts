@@ -1,13 +1,12 @@
 import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { Category } from '@/modules/category/entities/category.entity';
 import { Comment } from '@/modules/comment/entities/comment.entity';
-import { File } from '@/modules/file/entities/file.entity';
 import { Like } from '@/modules/like/entities/like.entity';
 import { User } from '@/modules/user/entities/user.entity';
 import { View } from '@/modules/view/entities/view.entity';
 import { EnumDatabaseTableName } from '@/types/core';
 import { EnumStatus } from '@/types/user';
-import { BeforeInsert, Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.Article)
 export class Article extends CustomBaseEntity {
@@ -53,26 +52,19 @@ export class Article extends CustomBaseEntity {
   @ManyToOne(() => User, { cascade: true })
   user: User;
 
-  @OneToMany(() => View, (View) => View.article)
-  view: number;
+  @OneToMany(() => View, (View) => View.article, { cascade: true })
+  views: View[];
 
-  @OneToMany(() => Like, (Like) => Like.article)
-  like: number;
+  @OneToMany(() => Like, (Like) => Like.article, { cascade: true })
+  likes: Like[];
 
   @ManyToMany(() => Category, (Category) => Category.article)
+  @JoinTable()
   category: Category[];
 
   @OneToMany(() => Comment, (Comment) => Comment.article)
-  comment: Comment[];
+  comments: Comment[];
 
   // @OneToMany(() => File, (File) => File.article)
   // file: File[];
-
-  @BeforeInsert()
-  addPrefixToCover = () => {
-    console.log(this.cover.indexOf('.myqcloud.com') !== -1, '-----asdasdasdasdasd');
-    if (this.cover.lastIndexOf('.myqcloud.com') !== -1) {
-      this.cover = `https://${this.cover}`;
-    }
-  };
 }

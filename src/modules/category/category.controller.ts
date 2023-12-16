@@ -1,25 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { EnumDatabaseTableName } from '@/types/core';
+import { QueryCategoryDto } from '@/modules/category/dto/query-category.dto';
 
-@Controller('category')
+@Controller(EnumDatabaseTableName.Category)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
+    return await this.categoryService.create(createCategoryDto);
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  async findAll() {
+    return await this.categoryService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
+  @Get()
+  async findOne(@Query() unique: QueryCategoryDto) {
+    return await this.categoryService.findOne(unique);
   }
 
   @Patch(':id')
@@ -27,8 +29,13 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  @Delete()
+  remove(@Body('id') id: string | string[]) {
+    return this.categoryService.remove(id);
+  }
+
+  @Patch()
+  restore(@Query('id') id: string | string[]) {
+    return this.categoryService.restore(id);
   }
 }

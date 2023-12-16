@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
+import { QueryLikeDto } from '@/modules/like/dto/query-like.dto';
 
 @Controller('like')
 export class LikeController {
@@ -13,22 +14,27 @@ export class LikeController {
   }
 
   @Get()
-  findAll() {
-    return this.likeService.findAll();
+  async findAll() {
+    return await this.likeService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.likeService.findOne(+id);
+  @Get()
+  async findOne(@Query('unique') unique: Partial<QueryLikeDto>) {
+    return await this.likeService.findOne(unique);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
-    return this.likeService.update(+id, updateLikeDto);
+  async update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
+    return await this.likeService.update(id, updateLikeDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.likeService.remove(+id);
+  @Delete()
+  remove(@Body('id') id: string | string[]) {
+    return this.likeService.remove(id);
+  }
+
+  @Patch('restore')
+  async restore(@Query('id') id: string | string[]) {
+    return await this.likeService.restore(id);
   }
 }

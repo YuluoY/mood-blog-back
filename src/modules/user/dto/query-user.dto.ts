@@ -1,9 +1,7 @@
 import { IsOptional } from 'class-validator';
+import { QueryBaseDto } from '@/global/QueryBaseDto';
 
-export class QueryUserDto {
-  @IsOptional()
-  id: string;
-
+export class QueryUserDto extends QueryBaseDto {
   @IsOptional()
   username: string;
 
@@ -15,10 +13,4 @@ export class QueryUserDto {
 
   @IsOptional()
   password: string;
-
-  @IsOptional()
-  sort: string;
-
-  @IsOptional()
-  order: 'ASC' | 'DESC';
 }
