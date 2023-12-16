@@ -6,13 +6,15 @@ import { AppConfig } from './config';
 import modules from './modules';
 import { JwtModule } from '@nestjs/jwt';
 import { I18nModule } from 'nestjs-i18n';
+import { RestModule } from './function/rest/rest.module';
 
 @Module({
   imports: [
     ...modules,
     TypeOrmModule.forRoot(AppConfig.orm),
     I18nModule.forRoot(AppConfig.plugin.i18n),
-    JwtModule.register(AppConfig.plugin.jwt)
+    JwtModule.register(AppConfig.plugin.jwt),
+    RestModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,6 +6,7 @@ import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { UserService } from '../user/user.service';
+import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -32,19 +33,53 @@ export class ArticleService {
     }
   }
 
-  findAll() {
-    return `This action returns all article`;
+  async findAll() {
+    return await this.articleManager.find({
+      relations: ['user']
+    });
+  }
+  async findOne(id: string) {
+    const article = await this.articleManager.findOne({
+      where: { id },
+      relations: ['user']
+    });
+    if (!article) throw new HttpException(this.i18n.t('error.article.notExist'), HttpStatus.BAD_REQUEST);
+    return article;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} article`;
+  async update(id: string, updateArticleDto: UpdateArticleDto) {
+    return await this.articleManager.update(id, updateArticleDto);
   }
 
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
+  async remove(id: string | string[]) {
+    return await this.articleManager.softDelete(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+  async restore(id: string | string[]) {
+    return await this.articleManager.restore(id);
+  }
+
+  async pagination(page: number, limit: number, query: Partial<QueryArticleDto>) {
+    // const [list, total] = await this.articleManager
+    //   .createQueryBuilder('article')
+    //   .leftJoinAndSelect('article.user', 'user')
+    //   .where('article.title like :title', { title: `%${query.title}%` })
+    //   .orderBy(`article.${query.sort}`, query.order)
+    //   .skip((page - 1) * limit)
+    //   .take(limit)
+    //   .getManyAndCount();
+    const [list, total] = await this.articleManager.findAndCount({
+      where: { title: query.title },
+      order: { [query.sort]: query.order },
+      skip: (page - 1) * limit,
+      take: limit,
+      relations: ['user']
+    });
+    return {
+      list,
+      total,
+      page: +page,
+      limit: +limit
+    };
   }
 }

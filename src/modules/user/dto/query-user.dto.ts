@@ -2,17 +2,23 @@ import { IsOptional } from 'class-validator';
 
 export class QueryUserDto {
   @IsOptional()
-  id?: string;
+  id: string;
 
   @IsOptional()
-  username?: string;
+  username: string;
 
   @IsOptional()
-  email?: string;
+  email: string;
 
   @IsOptional()
-  phone?: string;
+  phone: string;
 
   @IsOptional()
-  password?: string;
+  password: string;
+
+  @IsOptional()
+  sort: string;
+
+  @IsOptional()
+  order: 'ASC' | 'DESC';
 }

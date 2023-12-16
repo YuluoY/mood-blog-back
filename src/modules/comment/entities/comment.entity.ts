@@ -1,4 +1,4 @@
-import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
+import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { Article } from '@/modules/article/entities/article.entity';
 import { EnumDatabaseTableName } from '@/types/core';
 import { Entity, JoinColumn, ManyToOne } from 'typeorm';

@@ -7,7 +7,6 @@ import { EntityManager, Repository } from 'typeorm';
 import * as COS from 'cos-nodejs-sdk-v5';
 import { AppConfig } from '@/config';
 import { UserService } from '../user/user.service';
-import { IUploadFile } from '@/types/core';
 
 @Injectable()
 export class FileService {
@@ -25,9 +24,9 @@ export class FileService {
     @InjectRepository(File)
     private readonly fileManager: Repository<File>,
     private readonly userService: UserService
-  ) { }
+  ) {}
 
-  async create(file: Partial<IUploadFile>, userId: string) {
+  async create(file: Express.Multer.File, userId: string) {
     const params = Object.assign(this.baseParams, {
       Body: file.buffer,
       Key: `/image/${Date.now()}-${file.originalname}`
@@ -56,7 +55,7 @@ export class FileService {
           user: user
         };
         await manager.save(File, createFileDto);
-        return res.Location;
+        return 'https://' + res.Location;
       });
     } catch (error) {
       await this.remove(params.Key);

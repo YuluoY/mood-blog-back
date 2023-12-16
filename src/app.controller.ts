@@ -1,10 +1,11 @@
-import { Controller, Get, Res, Session as Sess } from '@nestjs/common';
+import { Controller, Get, Global, Res, Session as Sess } from '@nestjs/common';
 import { Response } from 'express';
 import { AppService } from './app.service';
 import { Success } from './types/template';
 import { ExpressSessionPlus } from './types/core';
 import { Public } from './decorator/Public';
 
+@Global()
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

@@ -1,4 +1,16 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Query, Req, Res, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+  Session
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { EnumDatabaseTableName, ExpressSessionPlus } from 'src/types/core';
 import { QueryUserDto } from './dto/query-user.dto';
@@ -12,7 +24,7 @@ import { Public } from '@/decorator/Public';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('/all')
+  @Get('all')
   async findAll() {
     return await this.userService.findAll();
   }
@@ -46,5 +58,11 @@ export class UserController {
   @Post('register')
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
+  }
+
+  @Get('pagination/:page/:limit')
+  @Public()
+  async pagination(@Query() query: QueryUserDto, @Param('page') page: number, @Param('limit') limit: number) {
+    return await this.userService.pagination(page, limit, query);
   }
 }

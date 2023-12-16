@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as svgCaptcha from 'svg-captcha';
 import { AppConfig } from './config';
 import { CookieOptions, Request, Response } from 'express';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { EntityManager, EntityTarget, FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class AppService {
+  private readonly entityManager: EntityManager;
   constructor(private readonly jwtService?: JwtService) {}
 
   async generateToken(payload: any): Promise<string> {
@@ -48,5 +50,15 @@ export class AppService {
     let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
     decryptedData += decipher.final('utf-8');
     return decryptedData;
+  }
+
+  async pagination<T>(
+    pageNum: number,
+    pageSize: number,
+    entity: EntityTarget<T>,
+    options?: FindManyOptions
+  ): Promise<any> {
+    options = Object.assign(options, { skip: (pageNum - 1) * pageSize, take: pageSize });
+    return await this.entityManager.findAndCount(entity, options);
   }
 }

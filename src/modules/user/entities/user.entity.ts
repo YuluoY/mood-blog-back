@@ -1,5 +1,5 @@
 import { AppConfig } from 'src/config';
-import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
+import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { EnumDatabaseTableName, IUserSocializes } from 'src/types/core';
 import { EnumRole, EnumStatus } from 'src/types/user';
 import { Column, Entity, Index } from 'typeorm';

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Upl
 import { FileService } from './file.service';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { IParseToken, IUploadFile } from '@/types/core';
+import { IParseToken } from '@/types/core';
 import { Request } from 'express';
 
 @Controller('file')
@@ -11,7 +11,7 @@ export class FileController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  create(@UploadedFile() file: Partial<IUploadFile>, @Req() request: Request & { user: IParseToken }) {
+  create(@UploadedFile() file: Express.Multer.File, @Req() request: Request & { user: IParseToken }) {
     return this.fileService.create(file, request.user.id);
   }
 

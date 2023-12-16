@@ -1,4 +1,4 @@
-import { CustomBaseEntity } from '@/entity/CustomBaseEntity';
+import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { Category } from '@/modules/category/entities/category.entity';
 import { Comment } from '@/modules/comment/entities/comment.entity';
 import { File } from '@/modules/file/entities/file.entity';
@@ -7,7 +7,7 @@ import { User } from '@/modules/user/entities/user.entity';
 import { View } from '@/modules/view/entities/view.entity';
 import { EnumDatabaseTableName } from '@/types/core';
 import { EnumStatus } from '@/types/user';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.Article)
 export class Article extends CustomBaseEntity {
@@ -67,4 +67,12 @@ export class Article extends CustomBaseEntity {
 
   // @OneToMany(() => File, (File) => File.article)
   // file: File[];
+
+  @BeforeInsert()
+  addPrefixToCover = () => {
+    console.log(this.cover.indexOf('.myqcloud.com') !== -1, '-----asdasdasdasdasd');
+    if (this.cover.lastIndexOf('.myqcloud.com') !== -1) {
+      this.cover = `https://${this.cover}`;
+    }
+  };
 }

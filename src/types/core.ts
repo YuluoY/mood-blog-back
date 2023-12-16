@@ -39,15 +39,3 @@ export interface IParseToken {
   username: string;
   role: EnumRole;
 }
-
-/**
- * @description: 文件上传的基本信息
- */
-export interface IUploadFile {
-  [key: string]: any;
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-}

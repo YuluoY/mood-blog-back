@@ -18,7 +18,7 @@ export class UserService {
     private readonly i18n: I18nService,
 
     private readonly appService: AppService
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -35,7 +35,7 @@ export class UserService {
     }
   }
 
-  async findOne(queryUserDto: QueryUserDto, { refreshToken, res }: IFindOneServiceOptions = {}) {
+  async findOne(queryUserDto: Partial<QueryUserDto>, { refreshToken, res }: IFindOneServiceOptions = {}) {
     try {
       return await this.userManager.manager.transaction(async (manager: EntityManager) => {
         const user = await manager.findOne(User, { where: queryUserDto });
@@ -94,5 +94,21 @@ export class UserService {
     };
     this.appService.setCookie(res, process.env.JWT_COOKIE_NAME, token, defualt);
     return Date.now() + defualt.maxAge;
+  }
+
+  async pagination(page: number, limit: number, query: QueryUserDto) {
+    const [list, total] = await this.userManager
+      .createQueryBuilder('user')
+      .where(query)
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      list,
+      total,
+      page,
+      limit
+    };
   }
 }
