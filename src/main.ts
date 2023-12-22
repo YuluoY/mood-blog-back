@@ -16,6 +16,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as session from 'express-session';
 import { AppService } from './app.service';
 import * as express from 'express';
+import * as process from 'process';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -52,6 +53,6 @@ async function bootstrap() {
   // 接口文档生成
   Swagger.install(app);
 
-  await app.listen(3000);
+  await app.listen(process.env.SERVER_PORT || 3000);
 }
 bootstrap();

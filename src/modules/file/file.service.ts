@@ -7,6 +7,7 @@ import { EntityManager, Repository } from 'typeorm';
 import * as COS from 'cos-nodejs-sdk-v5';
 import { AppConfig } from '@/config';
 import { UserService } from '../user/user.service';
+import { unlink } from 'fs/promises';
 
 @Injectable()
 export class FileService {
@@ -26,6 +27,30 @@ export class FileService {
     private readonly userService: UserService
   ) {}
 
+  async localCreate(file: Express.Multer.File, { userId, filePath, localPath }) {
+    if (!file) throw new HttpException('文件上传失败', HttpStatus.BAD_REQUEST);
+    try {
+      return await this.fileManager.manager.transaction(async (manager: EntityManager) => {
+        const user = await this.userService.findOne({ id: userId });
+        const { size, unit } = this.processFileUnit(file.size);
+        const createFileDto: Partial<CreateFileDto> = {
+          fieldname: file.fieldname,
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          encoding: file.encoding,
+          size: size + unit,
+          url: filePath,
+          user: user
+        };
+        await manager.save(File, createFileDto);
+        return filePath;
+      });
+    } catch (error) {
+      await this.removeFile(localPath);
+      throw new HttpException('文件上传失败', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async create(file: Express.Multer.File, userId: string) {
     const params = Object.assign(this.baseParams, {
       Body: file.buffer,
@@ -44,19 +69,13 @@ export class FileService {
         const res = await this.cos.putObject(params);
         const user = await this.userService.findOne({ id: userId });
 
-        let size = (file.size / 1024).toFixed(2) + 'KB';
-        if (file.size / 1024 > 1024) {
-          size = (file.size / 1024 / 1024).toFixed(2) + 'MB';
-        }
-        if (file.size / 1024 / 1024 > 1024) {
-          size = (file.size / 1024 / 1024 / 1024).toFixed(2) + 'GB';
-        }
+        const { size, unit } = this.processFileUnit(file.size);
         const createFileDto: Partial<CreateFileDto> = {
           fieldname: file.fieldname,
           originalname: file.originalname,
           mimetype: file.mimetype,
           encoding: file.encoding,
-          size: size,
+          size: size + unit,
           url: res.Location,
           key: params.Key,
           bucket: params.Bucket,
@@ -66,7 +85,7 @@ export class FileService {
         return 'https://' + res.Location;
       });
     } catch (error) {
-      await this.remove(params.Key);
+      // await this.remove(params.Key);
       throw new HttpException('文件上传失败', HttpStatus.BAD_REQUEST);
     }
   }
@@ -89,5 +108,26 @@ export class FileService {
     });
     const res = await this.cos.deleteObject(params);
     return res;
+  }
+
+  private processFileUnit(size: number) {
+    let unit = 'B';
+    if (size / 1024 > 1) {
+      size = size / 1024;
+      unit = 'KB';
+    }
+    if (size / 1024 > 1) {
+      size = size / 1024;
+      unit = 'MB';
+    }
+    if (size / 1024 > 1) {
+      size = size / 1024;
+      unit = 'GB';
+    }
+    return { size: size.toFixed(2), unit };
+  }
+
+  private removeFile(url: string) {
+    return unlink(url);
   }
 }

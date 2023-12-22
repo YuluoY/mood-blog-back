@@ -60,7 +60,7 @@ export class File extends CustomBaseEntity {
     type: 'varchar',
     length: 255,
     comment: 'cos存储的位置',
-    nullable: false
+    nullable: true
   })
   key: string;
 
@@ -68,7 +68,7 @@ export class File extends CustomBaseEntity {
     type: 'varchar',
     length: 150,
     comment: 'cos存储的桶名称',
-    nullable: false
+    nullable: true
   })
   bucket: string;
 }
