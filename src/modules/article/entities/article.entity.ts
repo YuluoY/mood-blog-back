@@ -49,6 +49,13 @@ export class Article extends CustomBaseEntity {
   })
   status: EnumStatus;
 
+  @Column({
+    type: 'int',
+    comment: '文字内容字数',
+    default: 0
+  })
+  words: number;
+
   @ManyToOne(() => User, { cascade: true })
   user: User;
 

@@ -1,6 +1,6 @@
 import { User } from '@/modules/user/entities/user.entity';
 import { EnumStatus } from '@/types/user';
-import { IsNotEmpty, IsNumberString, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { CreateViewDto } from '@/modules/view/dto/create-view.dto';
 import { CreateLikeDto } from '@/modules/like/dto/create-like.dto';
 import { CreateCategoryDto } from '@/modules/category/dto/create-category.dto';
@@ -27,4 +27,7 @@ export class CreateArticleDto {
   userId: string;
 
   categoryId: string;
+
+  @IsNumber()
+  words: number;
 }
