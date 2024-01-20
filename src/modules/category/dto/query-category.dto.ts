@@ -5,7 +5,7 @@ import { Optional } from '@nestjs/common';
 export class QueryCategoryDto extends PartialType(QueryBaseDto) {
   @ApiProperty({ description: '分类名称' })
   @Optional()
-  name: string;
+  cateName: string;
 
   @ApiProperty({ description: '文章id' })
   @Optional()

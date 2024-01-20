@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -29,7 +30,7 @@ export class UserController {
     return await this.userService.findAll();
   }
 
-  @Get()
+  @Get('getById')
   async findById(@Query('unique') unique: QueryUserDto) {
     return await this.userService.findOne(unique);
   }
@@ -65,4 +66,7 @@ export class UserController {
   async pagination(@Query() query: QueryUserDto, @Param('page') page: number, @Param('limit') limit: number) {
     return await this.userService.pagination(page, limit, query);
   }
+
+  @Delete('remove')
+  async remove(@Body('id') id: string | string[]) {}
 }

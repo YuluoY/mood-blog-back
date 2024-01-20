@@ -45,7 +45,7 @@ export class ArticleController {
   async pagination(
     @Param('page') page: number,
     @Param('limit') limit: number,
-    @Body() query: Partial<QueryArticleDto>
+    @Query() query: Partial<QueryArticleDto>
   ) {
     return await this.articleService.pagination(page, limit, query);
   }

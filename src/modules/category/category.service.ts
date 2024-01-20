@@ -19,13 +19,12 @@ export class CategoryService {
     try {
       return await this.categoryRepository.manager.transaction(async (manager) => {
         const c = new Category();
-        if (createCategoryDto.article && createCategoryDto.article.length) {
-          for (const article of createCategoryDto.article) {
-            const a = await this.articleService.findOne({ id: article });
-            c.article.push(a);
-          }
-        }
-        await manager.save(c);
+        c.cateName = createCategoryDto.cateName;
+        const category = await manager.findOne(Category, {
+          where: { cateName: createCategoryDto.cateName }
+        });
+        if (category) throw new HttpException('分类已存在', HttpStatus.BAD_REQUEST);
+        return await manager.save(c);
       });
     } catch (e) {
       throw new HttpException(e.message || e.toString(), HttpStatus.BAD_REQUEST);
@@ -34,7 +33,8 @@ export class CategoryService {
 
   async findAll() {
     return await this.categoryRepository.find({
-      relations: ['article']
+      relations: ['article'],
+      withDeleted: true
     });
   }
 
@@ -49,8 +49,12 @@ export class CategoryService {
     return 'This action updates a #';
   }
 
-  async remove(id: string | string[]) {
-    return await this.categoryRepository.softDelete(id);
+  async remove(id: string | string[], force: boolean = false) {
+    if (force) {
+      return await this.categoryRepository.delete(id);
+    } else {
+      return await this.categoryRepository.softDelete(id);
+    }
   }
 
   async restore(id: string | string[]) {

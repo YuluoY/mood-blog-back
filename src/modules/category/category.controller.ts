@@ -9,12 +9,12 @@ import { QueryCategoryDto } from '@/modules/category/dto/query-category.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
+  @Post('add')
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoryService.create(createCategoryDto);
   }
 
-  @Get()
+  @Get('all')
   async findAll() {
     return await this.categoryService.findAll();
   }
@@ -29,13 +29,13 @@ export class CategoryController {
     return this.categoryService.update(+id, updateCategoryDto);
   }
 
-  @Delete()
-  remove(@Body('id') id: string | string[]) {
-    return this.categoryService.remove(id);
+  @Delete('remove')
+  remove(@Query('id') id: string | string[], @Query('force') force: boolean = false) {
+    return this.categoryService.remove(id, force);
   }
 
-  @Patch()
-  restore(@Query('id') id: string | string[]) {
+  @Post('restore')
+  restore(@Body('id') id: string | string[]) {
     return this.categoryService.restore(id);
   }
 }

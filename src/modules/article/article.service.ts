@@ -65,6 +65,7 @@ export class ArticleService {
   }
 
   async pagination(page: number, limit: number, query: Partial<QueryArticleDto>) {
+    console.log(query);
     const [list, total] = await this.articleManager.findAndCount({
       where: { title: query.title },
       order: { [query.sort]: query.order },

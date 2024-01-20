@@ -14,23 +14,6 @@ export class Category extends CustomBaseEntity {
   })
   cateName: string;
 
-  @Column({
-    type: 'varchar',
-    comment: '分类别名, 用于url',
-    length: 100,
-    nullable: false,
-    unique: true
-  })
-  alias: string;
-
-  @Column({
-    type: 'varchar',
-    comment: '分类描述',
-    length: 255,
-    nullable: true
-  })
-  description: string;
-
   @ManyToMany(() => Article, (Article) => Article.category, { cascade: true })
   article: Article[];
 }
