@@ -15,4 +15,7 @@ export class QueryArticleDto extends QueryBaseDto {
 
   @Optional()
   parentId: string;
+
+  @Optional()
+  withDeleted: boolean;
 }

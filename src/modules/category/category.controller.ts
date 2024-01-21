@@ -30,8 +30,8 @@ export class CategoryController {
   }
 
   @Delete('remove')
-  remove(@Query('id') id: string | string[], @Query('force') force: boolean = false) {
-    return this.categoryService.remove(id, force);
+  remove(@Query('id') id: string | string[], @Query('force') force: boolean) {
+    return this.categoryService.remove(id, Boolean(force));
   }
 
   @Post('restore')

@@ -49,7 +49,7 @@ export class CategoryService {
     return 'This action updates a #';
   }
 
-  async remove(id: string | string[], force: boolean = false) {
+  async remove(id: string | string[], force: boolean) {
     if (force) {
       return await this.categoryRepository.delete(id);
     } else {

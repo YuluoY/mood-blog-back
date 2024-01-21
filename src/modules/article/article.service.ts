@@ -56,8 +56,12 @@ export class ArticleService {
     return await this.articleManager.update(id, updateArticleDto);
   }
 
-  async remove(id: string | string[]) {
-    return await this.articleManager.softDelete(id);
+  async remove(id: string | string[], force: boolean = false) {
+    if (force) {
+      return await this.articleManager.delete(id);
+    } else {
+      return await this.articleManager.softDelete(id);
+    }
   }
 
   async restore(id: string | string[]) {
@@ -65,13 +69,13 @@ export class ArticleService {
   }
 
   async pagination(page: number, limit: number, query: Partial<QueryArticleDto>) {
-    console.log(query);
     const [list, total] = await this.articleManager.findAndCount({
       where: { title: query.title },
       order: { [query.sort]: query.order },
       skip: (page - 1) * limit,
       take: limit,
-      relations: ['user', 'likes', 'views', 'comments', 'category']
+      relations: ['user', 'likes', 'views', 'comments', 'category'],
+      withDeleted: Boolean(query.withDeleted)
     });
     return {
       list,

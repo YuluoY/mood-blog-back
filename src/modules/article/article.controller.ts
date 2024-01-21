@@ -32,11 +32,11 @@ export class ArticleController {
   }
 
   @Delete('remove')
-  async remove(@Body('id') id: string | string[]) {
-    return await this.articleService.remove(id);
+  async remove(@Query('id') id: string | string[], @Query('force') force: boolean = false) {
+    return await this.articleService.remove(id, Boolean(force));
   }
 
-  @Patch('restore')
+  @Post('restore')
   async restore(@Body('id') id: string | string[]) {
     return await this.articleService.restore(id);
   }
