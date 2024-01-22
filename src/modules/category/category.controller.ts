@@ -31,7 +31,8 @@ export class CategoryController {
 
   @Delete('remove')
   remove(@Query('id') id: string | string[], @Query('force') force: boolean) {
-    return this.categoryService.remove(id, Boolean(force));
+    force = force ? JSON.parse(String(force)) : false;
+    return this.categoryService.remove(id, force);
   }
 
   @Post('restore')

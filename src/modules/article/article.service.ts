@@ -3,7 +3,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { UserService } from '../user/user.service';
 import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
@@ -11,6 +11,7 @@ import { Like } from '@/modules/like/entities/like.entity';
 import { View } from 'typeorm/schema-builder/view/View';
 import { Comment } from '@/modules/comment/entities/comment.entity';
 import { Category } from '@/modules/category/entities/category.entity';
+import { EnumStatus } from '@/types/user';
 
 @Injectable()
 export class ArticleService {
@@ -57,15 +58,24 @@ export class ArticleService {
   }
 
   async remove(id: string | string[], force: boolean = false) {
-    if (force) {
-      return await this.articleManager.delete(id);
-    } else {
-      return await this.articleManager.softDelete(id);
-    }
+    return await this.articleManager.manager.transaction(async (manager: EntityManager) => {
+      if (force) {
+        return await manager.delete(Article, id);
+      } else {
+        await manager.softDelete(Article, id);
+        return await manager.update(Article, id, { status: EnumStatus.Disabled });
+      }
+    });
   }
 
   async restore(id: string | string[]) {
-    return await this.articleManager.restore(id);
+    return await this.articleManager.manager.transaction(async (manager: EntityManager) => {
+      let res = await manager.restore(Article, id);
+      if (res.affected === 1) {
+        res = await manager.update(Article, id, { status: EnumStatus.Normal });
+      }
+      return res;
+    });
   }
 
   async pagination(page: number, limit: number, query: Partial<QueryArticleDto>) {

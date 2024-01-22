@@ -7,6 +7,7 @@ import { FriendModule } from '@/modules/friend/friend.module';
 import { LikeModule } from '@/modules/like/like.module';
 import { ShareModule } from '@/modules/share/share.module';
 import { ViewModule } from '@/modules/view/view.module';
+import { TagModule } from '@/modules/tag/tag.module';
 
 export default [
   UserModule,
@@ -17,5 +18,6 @@ export default [
   FriendModule,
   LikeModule,
   ShareModule,
-  ViewModule
+  ViewModule,
+  TagModule
 ];

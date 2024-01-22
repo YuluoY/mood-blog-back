@@ -27,13 +27,13 @@ export class ArticleController {
   }
 
   @Patch('update/:id')
-  async update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
+  async update(@Param('id') id: string, @Body() updateArticleDto: Partial<UpdateArticleDto>) {
     return await this.articleService.update(id, updateArticleDto);
   }
 
   @Delete('remove')
   async remove(@Query('id') id: string | string[], @Query('force') force: boolean = false) {
-    return await this.articleService.remove(id, Boolean(force));
+    return await this.articleService.remove(id, force ? JSON.parse(String(force)) : false);
   }
 
   @Post('restore')

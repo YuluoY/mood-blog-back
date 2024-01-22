@@ -45,7 +45,7 @@ export class Article extends CustomBaseEntity {
     type: 'enum',
     enum: EnumStatus,
     comment: '文章状态',
-    default: EnumStatus.Normal // 0 正常 1 禁用 2 删除 3 审核
+    default: EnumStatus.Normal // 0 正常 1 禁用 2 删除 3 审核 4 私密 5 密码保护 6 草稿
   })
   status: EnumStatus;
 
@@ -55,6 +55,20 @@ export class Article extends CustomBaseEntity {
     default: 0
   })
   words: number;
+
+  @Column({
+    type: 'boolean',
+    comment: '是否置顶',
+    default: false
+  })
+  isTop: boolean;
+
+  @Column({
+    type: 'boolean',
+    comment: '是否推荐',
+    default: false
+  })
+  isRecommend: boolean;
 
   @ManyToOne(() => User, { cascade: true })
   user: User;

@@ -17,5 +17,8 @@ export class QueryArticleDto extends QueryBaseDto {
   parentId: string;
 
   @Optional()
-  withDeleted: boolean;
+  isTop: boolean;
+
+  @Optional()
+  isRecommend: boolean;
 }

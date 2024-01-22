@@ -1,8 +1,10 @@
 export enum EnumStatus {
   Normal, // 正常
   Disabled, // 禁用
-  Deleted, // 删除
-  UnAudit // 审核中
+  UnAudit, // 审核中
+  Private, // 私密
+  Password, // 密码
+  Draft // 草稿
 }
 
 export enum EnumRole {

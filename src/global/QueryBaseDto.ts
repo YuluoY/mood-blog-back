@@ -1,4 +1,5 @@
 import { IsOptional } from 'class-validator';
+import { Optional } from '@nestjs/common';
 
 export class QueryBaseDto {
   @IsOptional()
@@ -18,4 +19,7 @@ export class QueryBaseDto {
 
   @IsOptional()
   order: 'ASC' | 'DESC' = 'DESC';
+
+  @Optional()
+  withDeleted: boolean;
 }
