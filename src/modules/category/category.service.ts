@@ -50,7 +50,6 @@ export class CategoryService {
   }
 
   async remove(id: string | string[], force: boolean) {
-    console.log(typeof force, force);
     if (force) {
       return await this.categoryRepository.delete(id);
     } else {

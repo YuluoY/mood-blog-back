@@ -7,6 +7,7 @@ import { View } from '@/modules/view/entities/view.entity';
 import { EnumDatabaseTableName } from '@/types/core';
 import { EnumStatus } from '@/types/user';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Tag } from '@/modules/tag/entities/tag.entity';
 
 @Entity(EnumDatabaseTableName.Article)
 export class Article extends CustomBaseEntity {
@@ -72,6 +73,10 @@ export class Article extends CustomBaseEntity {
 
   @ManyToOne(() => User, { cascade: true })
   user: User;
+
+  @ManyToMany(() => Tag, (Tag) => Tag.article)
+  @JoinTable()
+  tags: Tag[];
 
   @OneToMany(() => View, (View) => View.article, { cascade: true })
   views: View[];
