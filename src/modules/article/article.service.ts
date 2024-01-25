@@ -84,7 +84,7 @@ export class ArticleService {
       order: { [query.sort]: query.order },
       skip: (page - 1) * limit,
       take: limit,
-      relations: ['user', 'likes', 'views', 'comments', 'category'],
+      relations: ['user', 'likes', 'views', 'comments', 'category', 'tags'],
       withDeleted: Boolean(query.withDeleted)
     });
     return {
