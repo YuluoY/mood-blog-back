@@ -7,6 +7,14 @@ export class QueryCategoryDto extends PartialType(QueryBaseDto) {
   @Optional()
   cateName: string;
 
+  @ApiProperty({ description: '分类别名' })
+  @Optional()
+  cateAlias: string;
+
+  @ApiProperty({ description: '分类颜色' })
+  @Optional()
+  cateColor: string;
+
   @ApiProperty({ description: '文章id' })
   @Optional()
   articleId: string;

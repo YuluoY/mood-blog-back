@@ -1,10 +1,11 @@
-import { User } from '@/modules/user/entities/user.entity';
 import { EnumStatus } from '@/types/user';
 import { IsNotEmpty, IsNumber, IsNumberString, IsString } from 'class-validator';
-import { CreateViewDto } from '@/modules/view/dto/create-view.dto';
-import { CreateLikeDto } from '@/modules/like/dto/create-like.dto';
-import { CreateCategoryDto } from '@/modules/category/dto/create-category.dto';
-import { CreateCommentDto } from '@/modules/comment/dto/create-comment.dto';
+import { Tag } from '@/modules/tag/entities/tag.entity';
+import { Comment } from '@/modules/comment/entities/comment.entity';
+import { Category } from '@/modules/category/entities/category.entity';
+import { Like } from '@/modules/like/entities/like.entity';
+import { View } from '@/modules/view/entities/view.entity';
+import { User } from '@/modules/user/entities/user.entity';
 
 export class CreateArticleDto {
   @IsString()
@@ -24,10 +25,18 @@ export class CreateArticleDto {
   @IsNumberString()
   status: EnumStatus;
 
-  userId: string;
-
-  categoryId: string;
-
   @IsNumber()
   words: number;
+
+  userId: User;
+
+  category: Category;
+
+  views: View[];
+
+  likes: Like[];
+
+  comments: Comment[];
+
+  tags: Tag[];
 }

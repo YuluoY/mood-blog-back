@@ -15,7 +15,6 @@ export class TagService {
     const tag = await this.tagManager.findOne({
       where: { tagName: createTagDto.tagName }
     });
-    console.log(tag);
     if (tag) throw new HttpException('标签名称已存在', HttpStatus.BAD_REQUEST);
     return await this.tagManager.save(createTagDto);
   }

@@ -12,6 +12,9 @@ import { View } from 'typeorm/schema-builder/view/View';
 import { Comment } from '@/modules/comment/entities/comment.entity';
 import { Category } from '@/modules/category/entities/category.entity';
 import { EnumStatus } from '@/types/user';
+import { Tag } from '@/modules/tag/entities/tag.entity';
+import { TagService } from '@/modules/tag/tag.service';
+import { User } from '@/modules/user/entities/user.entity';
 
 @Injectable()
 export class ArticleService {
@@ -29,8 +32,26 @@ export class ArticleService {
           where: { title: createArticleDto.title }
         });
         if (isExistArticle) throw new HttpException(this.i18n.t('error.article.titleRepeat'), HttpStatus.BAD_REQUEST);
+        // 标签的处理
+        const newTags: Tag[] = [];
+        for (let i = 0; i < createArticleDto.tags.length; i++) {
+          const tag = createArticleDto.tags[i];
+          if (typeof tag === 'string') {
+            const isExistTag = await manager.findOne(Tag, { where: { tagName: tag } });
+            if (isExistTag) {
+              createArticleDto.tags[i] = isExistTag;
+            } else {
+              const newTag = manager.create(Tag, { tagName: tag });
+              newTags.push(newTag);
+              createArticleDto.tags[i] = newTag;
+            }
+          }
+        }
+        if (newTags.length) {
+          await manager.save(Tag, newTags);
+        }
         const article = manager.create(Article, createArticleDto);
-        article.user = await this.userService.findOne({ id: userId });
+        article.user = await manager.findOne(User, { where: { id: userId } });
         await manager.save(Article, article);
         return this.i18n.t('success.article.addSuccess');
       });

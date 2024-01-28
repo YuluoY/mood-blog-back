@@ -84,9 +84,9 @@ export class Article extends CustomBaseEntity {
   @OneToMany(() => Like, (Like) => Like.article, { cascade: true })
   likes: Like[];
 
-  @ManyToMany(() => Category, (Category) => Category.article)
+  @ManyToOne(() => Category, (Category) => Category.article)
   @JoinTable()
-  category: Category[];
+  category: Category;
 
   @OneToMany(() => Comment, (Comment) => Comment.article)
   comments: Comment[];

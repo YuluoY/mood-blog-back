@@ -1,7 +1,7 @@
 import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { Article } from '@/modules/article/entities/article.entity';
 import { EnumDatabaseTableName } from '@/types/core';
-import { Column, Entity, ManyToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity(EnumDatabaseTableName.Category)
 export class Category extends CustomBaseEntity {
@@ -14,6 +14,24 @@ export class Category extends CustomBaseEntity {
   })
   cateName: string;
 
-  @ManyToMany(() => Article, (Article) => Article.category, { cascade: true })
+  @Column({
+    type: 'varchar',
+    comment: '分类别名, 用于url',
+    length: 100,
+    nullable: true,
+    unique: true
+  })
+  cateAlias: string;
+
+  @Column({
+    type: 'varchar',
+    comment: '分类颜色',
+    length: 20,
+    nullable: true,
+    default: '#000000'
+  })
+  cateColor: string;
+
+  @OneToMany(() => Article, (Article) => Article.category, { cascade: true })
   article: Article[];
 }

@@ -17,7 +17,8 @@ export class Tag extends CustomBaseEntity {
   @Column({
     type: 'varchar',
     length: 20,
-    comment: '标签颜色'
+    comment: '标签颜色',
+    nullable: true
   })
   tagColor: string;
 
