@@ -8,13 +8,14 @@ import { EnumDatabaseTableName } from '@/types/core';
 import { EnumStatus } from '@/types/user';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Tag } from '@/modules/tag/entities/tag.entity';
+import { Fail } from '@/types/template';
 
 @Entity(EnumDatabaseTableName.Article)
 export class Article extends CustomBaseEntity {
   @Column({
     type: 'varchar',
     comment: '文章标题',
-    length: 255,
+    length: 1024,
     nullable: false,
     unique: true
   })
@@ -74,7 +75,7 @@ export class Article extends CustomBaseEntity {
   @ManyToOne(() => User, { cascade: true })
   user: User;
 
-  @ManyToMany(() => Tag, (Tag) => Tag.article)
+  @ManyToMany(() => Tag, (Tag) => Tag.article, { onDelete: 'NO ACTION' })
   @JoinTable()
   tags: Tag[];
 

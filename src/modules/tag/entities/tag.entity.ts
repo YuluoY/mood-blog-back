@@ -18,7 +18,8 @@ export class Tag extends CustomBaseEntity {
     type: 'varchar',
     length: 20,
     comment: '标签颜色',
-    nullable: true
+    nullable: true,
+    default: '#000000'
   })
   tagColor: string;
 

@@ -32,23 +32,28 @@ export class ArticleService {
           where: { title: createArticleDto.title }
         });
         if (isExistArticle) throw new HttpException(this.i18n.t('error.article.titleRepeat'), HttpStatus.BAD_REQUEST);
+
         // 标签的处理
         const newTags: Tag[] = [];
         for (let i = 0; i < createArticleDto.tags.length; i++) {
           const tag = createArticleDto.tags[i];
-          if (typeof tag === 'string') {
-            const isExistTag = await manager.findOne(Tag, { where: { tagName: tag } });
-            if (isExistTag) {
-              createArticleDto.tags[i] = isExistTag;
-            } else {
-              const newTag = manager.create(Tag, { tagName: tag });
-              newTags.push(newTag);
-              createArticleDto.tags[i] = newTag;
-            }
+          const isExistTag = await manager.findOne(Tag, { where: { tagName: tag.tagName } });
+          if (isExistTag) {
+            createArticleDto.tags[i] = isExistTag;
+          } else {
+            const newTag = manager.create(Tag, { tagName: tag.tagName });
+            newTags.push(newTag);
+            createArticleDto.tags[i] = newTag;
           }
         }
         if (newTags.length) {
           await manager.save(Tag, newTags);
+        }
+        // 分类的处理
+        if (createArticleDto.category) {
+          const category = await manager.findOne(Category, { where: { id: createArticleDto.category.id } });
+          if (!category) throw new HttpException(this.i18n.t('error.category.notExist'), HttpStatus.BAD_REQUEST);
+          createArticleDto.category = category;
         }
         const article = manager.create(Article, createArticleDto);
         article.user = await manager.findOne(User, { where: { id: userId } });
