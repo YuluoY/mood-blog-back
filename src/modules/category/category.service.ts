@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from '@/modules/category/entities/category.entity';
 import { ArticleService } from '@/modules/article/article.service';
 import { QueryCategoryDto } from '@/modules/category/dto/query-category.dto';
+import { QueryFilter } from '@/global/QueryFilter';
 
 @Injectable()
 export class CategoryService {
@@ -31,11 +32,8 @@ export class CategoryService {
     }
   }
 
-  async findAll() {
-    return await this.categoryRepository.find({
-      relations: ['article'],
-      withDeleted: true
-    });
+  async findAll(query: QueryCategoryDto) {
+    return await this.categoryRepository.find(QueryFilter.findManyOptionsFilter(query));
   }
 
   async findOne(unique: QueryCategoryDto) {

@@ -22,4 +22,7 @@ export class QueryBaseDto {
 
   @Optional()
   withDeleted: boolean;
+
+  @Optional()
+  relations?: string[];
 }

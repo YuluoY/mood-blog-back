@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { QueryTagDto } from '@/modules/tag/dto/query-tag.dto';
 
 @Controller('tag')
 export class TagController {
@@ -13,7 +14,7 @@ export class TagController {
   }
 
   @Get('all')
-  findAll(@Param('query') query: UpdateTagDto) {
+  findAll(@Param('query') query: QueryTagDto) {
     return this.tagService.findAll(query);
   }
 
@@ -38,7 +39,7 @@ export class TagController {
   }
 
   @Get('pagination/:page/:limit')
-  pagination(@Param('page') page: number, @Param('limit') limit: number, @Query() query: UpdateTagDto) {
+  pagination(@Param('page') page: number, @Param('limit') limit: number, @Query() query: QueryTagDto) {
     return this.tagService.pagination(page, limit, query);
   }
 }

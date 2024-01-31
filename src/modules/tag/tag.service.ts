@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOptions, Repository } from 'typeorm';
 import { Tag } from '@/modules/tag/entities/tag.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { QueryTagDto } from '@/modules/tag/dto/query-tag.dto';
+import { QueryFilter } from '@/global/QueryFilter';
 
 @Injectable()
 export class TagService {
@@ -19,10 +21,8 @@ export class TagService {
     return await this.tagManager.save(createTagDto);
   }
 
-  async findAll(updateTagDto: UpdateTagDto) {
-    return await this.tagManager.find({
-      relations: ['article']
-    });
+  async findAll(queryTagDto: QueryTagDto) {
+    return await this.tagManager.find(QueryFilter.findManyOptionsFilter(queryTagDto));
   }
 
   async findOne(id: string, updateTagDto?: UpdateTagDto) {
@@ -45,7 +45,7 @@ export class TagService {
     return await this.tagManager.restore(id);
   }
 
-  async pagination(page: number, limit: number, query: Partial<UpdateTagDto> = {}) {
+  async pagination(page: number, limit: number, query: Partial<QueryTagDto> = {}) {
     const [list, total] = await this.tagManager.findAndCount({
       relations: ['article'],
       take: limit,
