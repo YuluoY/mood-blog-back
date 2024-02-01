@@ -71,12 +71,13 @@ export class ArticleService {
     });
   }
   async findOne(data: Partial<QueryArticleDto>) {
-    const article = await this.articleManager.findOne({
-      where: data,
-      relations: ['user']
-    });
-    if (!article) throw new HttpException(this.i18n.t('error.article.notExist'), HttpStatus.BAD_REQUEST);
-    return article;
+    // const article = await this.articleManager.findOne({
+    //   where: data,
+    //   relations: ['user']
+    // });
+    // if (!article) throw new HttpException(this.i18n.t('error.article.notExist'), HttpStatus.BAD_REQUEST);
+    // return article;
+    return null;
   }
 
   async update(id: string, updateArticleDto: Partial<UpdateArticleDto>) {
@@ -105,14 +106,37 @@ export class ArticleService {
   }
 
   async pagination(page: number, limit: number, query: Partial<QueryArticleDto>) {
-    const [list, total] = await this.articleManager.findAndCount({
-      where: { title: query.title },
-      order: { [query.sort]: query.order },
-      skip: (page - 1) * limit,
-      take: limit,
-      relations: ['user', 'likes', 'views', 'comments', 'category', 'tags'],
-      withDeleted: Boolean(query.withDeleted)
-    });
+    const qb = this.articleManager.createQueryBuilder('article');
+    qb.leftJoinAndSelect('article.tags', 'tag');
+    qb.leftJoinAndSelect('article.category', 'category');
+    qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.likes', 'like');
+    qb.leftJoinAndSelect('article.views', 'view');
+    qb.leftJoinAndSelect('article.comments', 'comment');
+    if (query?.status) {
+      qb.where('article.status = :status', { status: query.status });
+    }
+    if (query.tags?.length) {
+      // 查找tags里面包含的文章，并且将文章的tags也查出来，并返回此文章下的所有tags
+      qb.andWhere('tag.tagName IN (:...tagName)', { tagName: query.tags });
+    }
+    if (query?.category) {
+      qb.where('category.id = :id', { id: query.category });
+    }
+    if (query?.withDeleted) {
+      qb.withDeleted();
+    }
+    if (query?.title) {
+      qb.where('article.title like :title', { title: `%${query.title}%` });
+    }
+    if (query?.sort) {
+      qb.orderBy(`article.${query.sort}`, query.order || 'DESC');
+    }
+    const [list, total] = await qb
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
     return {
       list,
       total,

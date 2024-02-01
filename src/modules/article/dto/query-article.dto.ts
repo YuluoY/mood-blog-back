@@ -1,6 +1,7 @@
 import { IsString } from 'class-validator';
 import { Optional } from '@nestjs/common';
 import { QueryBaseDto } from '@/global/QueryBaseDto';
+import { EnumStatus } from '@/types/user';
 
 export class QueryArticleDto extends QueryBaseDto {
   @IsString()
@@ -8,7 +9,7 @@ export class QueryArticleDto extends QueryBaseDto {
   title: string;
 
   @Optional()
-  userId: string;
+  user: string;
 
   @Optional()
   articleId: string;
@@ -21,4 +22,13 @@ export class QueryArticleDto extends QueryBaseDto {
 
   @Optional()
   isRecommend: boolean;
+
+  @Optional()
+  tags: string[];
+
+  @Optional()
+  category: string;
+
+  @Optional()
+  status: EnumStatus;
 }

@@ -18,7 +18,7 @@ export class Category extends CustomBaseEntity {
     type: 'varchar',
     comment: '分类别名, 用于url',
     length: 100,
-    nullable: true,
+    nullable: false,
     unique: true
   })
   cateAlias: string;
