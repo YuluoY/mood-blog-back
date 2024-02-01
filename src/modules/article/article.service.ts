@@ -133,6 +133,7 @@ export class ArticleService {
       qb.orderBy(`article.${query.sort}`, query.order || 'DESC');
     }
     const [list, total] = await qb
+      .leftJoinAndSelect('article.tags', 'allTags')
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
