@@ -6,6 +6,8 @@ import { Request } from 'express';
 import { IParseToken } from '@/types/core';
 import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 import { ApiBody } from '@nestjs/swagger';
+import { QueryFindManyOptions } from '@/global/QueryFindManyOptions';
+import { Article } from '@/modules/article/entities/article.entity';
 
 @Controller('article')
 export class ArticleController {
@@ -45,7 +47,7 @@ export class ArticleController {
   async pagination(
     @Param('page') page: number,
     @Param('limit') limit: number,
-    @Query() query: Partial<QueryArticleDto>
+    @Query() query: Partial<QueryFindManyOptions<Article>>
   ) {
     return await this.articleService.pagination(page, limit, query);
   }

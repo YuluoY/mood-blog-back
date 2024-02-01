@@ -15,6 +15,7 @@ import { EnumStatus } from '@/types/user';
 import { Tag } from '@/modules/tag/entities/tag.entity';
 import { TagService } from '@/modules/tag/tag.service';
 import { User } from '@/modules/user/entities/user.entity';
+import { QueryFindManyOptions } from '@/global/QueryFindManyOptions';
 
 @Injectable()
 export class ArticleService {
@@ -105,7 +106,7 @@ export class ArticleService {
     });
   }
 
-  async pagination(page: number, limit: number, query: Partial<QueryArticleDto>) {
+  async pagination(page: number, limit: number, query: Partial<QueryFindManyOptions<Article>>) {
     const qb = this.articleManager.createQueryBuilder('article');
     qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect('article.category', 'category');
@@ -113,21 +114,23 @@ export class ArticleService {
     qb.leftJoinAndSelect('article.likes', 'like');
     qb.leftJoinAndSelect('article.views', 'view');
     qb.leftJoinAndSelect('article.comments', 'comment');
-    if (query?.status) {
-      qb.where('article.status = :status', { status: query.status });
+
+    console.log(query);
+    if (query?.where?.status) {
+      qb.where('article.status = :status', { status: query.where.status });
     }
-    if (query.tags?.length) {
+    if (query?.where?.tags?.length) {
       // 查找tags里面包含的文章，并且将文章的tags也查出来，并返回此文章下的所有tags
-      qb.andWhere('tag.tagName IN (:...tagName)', { tagName: query.tags });
+      qb.andWhere('tag.tagName IN (:...tagName)', { tagName: query.where.tags });
     }
-    if (query?.category) {
-      qb.where('category.id = :id', { id: query.category });
+    if (query?.where?.category) {
+      qb.where('category.id = :id', { id: query.where.category });
     }
     if (query?.withDeleted) {
       qb.withDeleted();
     }
-    if (query?.title) {
-      qb.where('article.title like :title', { title: `%${query.title}%` });
+    if (query?.where?.title) {
+      qb.where('article.title like :title', { title: `%${query.where.title}%` });
     }
     if (query?.sort) {
       qb.orderBy(`article.${query.sort}`, query.order || 'DESC');
