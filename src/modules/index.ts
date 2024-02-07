@@ -8,6 +8,7 @@ import { LikeModule } from '@/modules/like/like.module';
 import { ShareModule } from '@/modules/share/share.module';
 import { ViewModule } from '@/modules/view/view.module';
 import { TagModule } from '@/modules/tag/tag.module';
+import { VisitorModule } from '@/modules/visitor/visitor.module';
 
 export default [
   UserModule,
@@ -19,5 +20,6 @@ export default [
   LikeModule,
   ShareModule,
   ViewModule,
-  TagModule
+  TagModule,
+  VisitorModule
 ];

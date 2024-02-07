@@ -5,6 +5,7 @@ import { AppConfig } from './config';
 import { CookieOptions, Request, Response } from 'express';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 import { EntityManager, EntityTarget, FindManyOptions } from 'typeorm';
+import { IBaiduMapPosition } from '@/types/core';
 
 @Injectable()
 export class AppService {
@@ -60,5 +61,40 @@ export class AppService {
   ): Promise<any> {
     options = Object.assign(options, { skip: (pageNum - 1) * pageSize, take: pageSize });
     return await this.entityManager.findAndCount(entity, options);
+  }
+
+  async getPosition(ip: string) {
+    return new Promise((resolve, reject) => {
+      const https = require('https');
+      const ak = 'goRxJfxb85Ewkz3LN35FuKLhu9bQARcc';
+      const url = `https://api.map.baidu.com/location/ip?ip=${ip}&ak=${ak}`;
+      https
+        .get(url, (res: any) => {
+          let data = '';
+          res.on('data', (chunk: any) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            const pos = JSON.parse(data || '{}') as IBaiduMapPosition;
+            const res = {
+              address: pos?.address,
+              country: '',
+              province: pos?.content?.address_detail?.province,
+              city: pos?.content?.address_detail?.city,
+              district: pos?.content?.address_detail?.district,
+              street: pos?.content?.address_detail?.street,
+              point: pos?.content?.point,
+              adcode: pos?.content?.address_detail?.adcode
+            };
+            if (res.address) {
+              res.country = res.address.split('|')[0];
+            }
+            resolve(res);
+          });
+        })
+        .on('error', (err: any) => {
+          reject(err);
+        });
+    });
   }
 }

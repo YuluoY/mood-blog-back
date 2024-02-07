@@ -13,7 +13,8 @@ export enum EnumDatabaseTableName {
   Like = 'like',
   File = 'file',
   Router = 'router',
-  View = 'view'
+  View = 'view',
+  Visitor = 'visitor'
 }
 export interface ExpressSessionPlus extends Session {
   code?: string;
@@ -38,4 +39,25 @@ export interface IParseToken {
   id: string;
   username: string;
   role: EnumRole;
+}
+
+export interface IBaiduMapPosition {
+  address: string;
+  content: {
+    address_detail: {
+      province: string;
+      city: string;
+      district: string;
+      street: string;
+      street_number: string;
+      city_code: number;
+      adcode: number;
+    };
+    address: string;
+    point: {
+      x: string;
+      y: string;
+    };
+  };
+  status: number;
 }

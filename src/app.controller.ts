@@ -1,4 +1,4 @@
-import { Controller, Get, Global, Res, Session as Sess } from '@nestjs/common';
+import { Controller, Get, Global, Param, Res, Session as Sess } from '@nestjs/common';
 import { Response } from 'express';
 import { AppService } from './app.service';
 import { Success } from './types/template';
@@ -16,5 +16,12 @@ export class AppController {
     const { data, text } = this.appService.getCode();
     session.code = text;
     res.send(Success<string>(data));
+  }
+
+  @Get('position/:ip')
+  @Public()
+  async getPosition(@Param('ip') ip: string, @Res() res: Response) {
+    const data = await this.appService.getPosition(ip);
+    res.send(Success(data));
   }
 }
