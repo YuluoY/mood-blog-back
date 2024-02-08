@@ -8,6 +8,7 @@ import { QueryArticleDto } from '@/modules/article/dto/query-article.dto';
 import { ApiBody } from '@nestjs/swagger';
 import { QueryFindManyOptions } from '@/global/QueryFindManyOptions';
 import { Article } from '@/modules/article/entities/article.entity';
+import { Public } from '@/decorator/Public';
 
 @Controller('article')
 export class ArticleController {
@@ -44,6 +45,7 @@ export class ArticleController {
   }
 
   @Get('pagination/:page/:limit')
+  @Public()
   async pagination(
     @Param('page') page: number,
     @Param('limit') limit: number,

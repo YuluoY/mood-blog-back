@@ -3,6 +3,7 @@ import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { QueryTagDto } from '@/modules/tag/dto/query-tag.dto';
+import { Public } from '@/decorator/Public';
 
 @Controller('tag')
 export class TagController {
@@ -14,6 +15,7 @@ export class TagController {
   }
 
   @Get('all')
+  @Public()
   findAll(@Param('query') query: QueryTagDto) {
     return this.tagService.findAll(query);
   }

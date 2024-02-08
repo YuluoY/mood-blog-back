@@ -80,6 +80,7 @@ export class Article extends CustomBaseEntity {
   tags: Tag[];
 
   @OneToMany(() => View, (View) => View.article, { cascade: true })
+  @JoinTable()
   views: View[];
 
   @OneToMany(() => Like, (Like) => Like.article, { cascade: true })

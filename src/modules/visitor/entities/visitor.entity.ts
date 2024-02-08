@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 import { EnumDatabaseTableName } from '@/types/core';
 import { CustomBaseEntity } from '@/global/CustomBaseEntity';
+import { User } from '@/modules/user/entities/user.entity';
 
 @Entity(EnumDatabaseTableName.Visitor)
 export class Visitor extends CustomBaseEntity {
@@ -26,7 +27,7 @@ export class Visitor extends CustomBaseEntity {
     comment: '操作系统',
     nullable: true
   })
-  os: string;
+  windowsOS: string;
 
   @Column({
     type: 'varchar',
@@ -92,4 +93,11 @@ export class Visitor extends CustomBaseEntity {
     nullable: true
   })
   adcode: string;
+
+  @Column({
+    type: 'int',
+    comment: '访问次数',
+    default: 1
+  })
+  count: number;
 }

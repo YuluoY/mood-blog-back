@@ -2,12 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ViewService } from './view.service';
 import { CreateViewDto } from './dto/create-view.dto';
 import { UpdateViewDto } from './dto/update-view.dto';
+import { Public } from '@/decorator/Public';
+import { EnumDatabaseTableName } from '@/types/core';
 
-@Controller('view')
+@Controller(EnumDatabaseTableName.View)
 export class ViewController {
   constructor(private readonly viewService: ViewService) {}
 
-  @Post()
+  @Post('add')
+  @Public()
   create(@Body() createViewDto: CreateViewDto) {
     return this.viewService.create(createViewDto);
   }

@@ -1,19 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { VisitorService } from './visitor.service';
 import { CreateVisitorDto } from './dto/create-visitor.dto';
 import { UpdateVisitorDto } from './dto/update-visitor.dto';
+import { Public } from '@/decorator/Public';
+import { QueryVisitorDto } from '@/modules/visitor/dto/query-visitor.dto';
 
 @Controller('visitor')
 export class VisitorController {
   constructor(private readonly visitorService: VisitorService) {}
 
-  @Post()
-  create(@Body() createVisitorDto: CreateVisitorDto) {
+  @Post('add')
+  @Public()
+  create(@Body() createVisitorDto: Partial<CreateVisitorDto>) {
     return this.visitorService.create(createVisitorDto);
   }
 
-  @Get()
-  findAll() {
+  @Get('count')
+  @Public()
+  findAllCount() {
+    return this.visitorService.findAllCount();
+  }
+
+  @Get('all')
+  findAll(@Query('query') query: QueryVisitorDto) {
     return this.visitorService.findAll();
   }
 
