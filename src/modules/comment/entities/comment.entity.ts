@@ -14,6 +14,44 @@ export class Comment extends CustomBaseEntity {
   })
   content: string;
 
+  @Column({
+    type: 'varchar',
+    length: 255,
+    comment: '昵称',
+    default: '神秘人'
+  })
+  nickname: string;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '邮箱',
+    default: ''
+  })
+  email: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    comment: '网址',
+    default: ''
+  })
+  website: string;
+
+  @Column({
+    type: 'boolean',
+    comment: '是否订阅回复',
+    default: false
+  })
+  isSubscribe: boolean;
+
+  @Column({
+    type: 'boolean',
+    comment: '是否置顶',
+    default: false
+  })
+  isTop: boolean;
+
   @ManyToOne(() => User, { cascade: true })
   user: User;
 
