@@ -1,5 +1,9 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 import { Optional } from '@nestjs/common';
+import { User } from '@/modules/user/entities/user.entity';
+import { Article } from '@/modules/article/entities/article.entity';
+import { Visitor } from '@/modules/visitor/entities/visitor.entity';
+import { Comment } from '@/modules/comment/entities/comment.entity';
 
 export class CreateCommentDto {
   @IsNotEmpty({ message: '评论内容不能为空' })
@@ -20,14 +24,23 @@ export class CreateCommentDto {
   isSubscribe: boolean;
 
   @IsOptional()
+  qq: string;
+
+  @IsOptional()
+  avatar: string;
+
+  @IsOptional()
   isTop: boolean;
 
-  @IsNotEmpty({ message: '用户id不能为空' })
-  userId: string;
+  @IsOptional()
+  visitor: Visitor;
+
+  @IsOptional()
+  user: User;
 
   @Optional()
-  articleId: string;
+  article: Article;
 
   @Optional()
-  parentId: string;
+  parent: Comment;
 }

@@ -3,12 +3,15 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { QueryCommentDto } from '@/modules/comment/dto/query-comment.dto';
+import { EnumDatabaseTableName } from '@/types/core';
+import { Public } from '@/decorator/Public';
 
-@Controller('comment')
+@Controller(EnumDatabaseTableName.Comment)
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post()
+  @Post('add')
+  @Public()
   create(@Body() createCommentDto: CreateCommentDto) {
     return this.commentService.create(createCommentDto);
   }

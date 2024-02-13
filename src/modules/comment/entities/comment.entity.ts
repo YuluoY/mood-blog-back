@@ -4,6 +4,8 @@ import { EnumDatabaseTableName } from '@/types/core';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Like } from '@/modules/like/entities/like.entity';
 import { User } from '@/modules/user/entities/user.entity';
+import { AppConfig } from '@/config';
+import { Visitor } from '@/modules/visitor/entities/visitor.entity';
 
 @Entity(EnumDatabaseTableName.Comment)
 export class Comment extends CustomBaseEntity {
@@ -21,6 +23,22 @@ export class Comment extends CustomBaseEntity {
     default: '神秘人'
   })
   nickname: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    comment: 'qq',
+    default: ''
+  })
+  qq: string;
+
+  @Column({
+    type: 'varchar',
+    length: 100,
+    comment: '头像',
+    default: AppConfig.server.defaultAvatar
+  })
+  avatar: string;
 
   @Column({
     type: 'varchar',
@@ -51,6 +69,9 @@ export class Comment extends CustomBaseEntity {
     default: false
   })
   isTop: boolean;
+
+  @ManyToOne(() => Visitor, { cascade: true })
+  visitor: Visitor;
 
   @ManyToOne(() => User, { cascade: true })
   user: User;

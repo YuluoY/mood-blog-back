@@ -5,36 +5,39 @@ import { QueryCommentDto } from '@/modules/comment/dto/query-comment.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from '@/modules/comment/entities/comment.entity';
-import { UserService } from '@/modules/user/user.service';
-import { ArticleService } from '@/modules/article/article.service';
+import { User } from '@/modules/user/entities/user.entity';
+import { Visitor } from '@/modules/visitor/entities/visitor.entity';
+import { Article } from '@/modules/article/entities/article.entity';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectRepository(Comment)
-    private readonly commentManager: Repository<Comment>,
-
-    private readonly userService: UserService,
-    private readonly articleService: ArticleService
+    private readonly commentManager: Repository<Comment>
   ) {}
 
   async create(createCommentDto: CreateCommentDto) {
     try {
       return await this.commentManager.manager.transaction(async (manager) => {
-        const { userId, articleId, parentId } = createCommentDto;
-        const user = await this.userService.findOne({ id: userId });
-        const article = await this.articleService.findOne({ id: articleId });
-        const parent = await this.findOne({ id: parentId });
-        const comment = new Comment();
-        if (!user) throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
-        comment.user = user;
-        if (article) comment.article = article;
-        if (parent) {
-          comment.parent = parent;
-          // 找到父级的评论后将这个comment push到父级评论的children中
-          comment.parent.children.push(comment);
+        const { user, article, parent, visitor } = createCommentDto;
+        const $Comment = manager.create(Comment);
+        Object.assign($Comment, createCommentDto);
+        if (user && user.id) {
+          $Comment.user = await manager.findOne(User, { where: { id: user.id } });
         }
-        return await manager.save(comment);
+        if (visitor && visitor.id) {
+          $Comment.visitor = await manager.findOne(Visitor, { where: { id: visitor.id } });
+        }
+        if (article && article.id) {
+          $Comment.article = await manager.findOne(Article, { where: { id: article.id } });
+        }
+        if (parent && parent.id) {
+          $Comment.parent = await manager.findOne(Comment, { where: { id: parent.id } });
+          // 找到父级的评论后将这个comment push到父级评论的children中
+          $Comment.parent.children.push($Comment);
+        }
+        console.log($Comment);
+        return await manager.save($Comment);
       });
     } catch (e) {
       throw new HttpException(e.message || e.toString(), HttpStatus.BAD_REQUEST);
@@ -56,21 +59,7 @@ export class CommentService {
 
   async update(id: string, updateCommentDto: UpdateCommentDto) {
     try {
-      return await this.commentManager.manager.transaction(async (manager) => {
-        const user = await this.userService.findOne({ id: updateCommentDto.userId });
-        if (!user) throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
-        const comment = new Comment();
-        comment.user = user;
-        if (updateCommentDto.articleId) {
-          comment.article = await this.articleService.findOne({ id: updateCommentDto.articleId });
-        }
-        if (updateCommentDto.parentId) {
-          comment.parent = await this.findOne({ id: updateCommentDto.parentId });
-          // 找到父级的评论后将这个comment push到父级评论的children中
-          comment.parent.children.push(comment);
-        }
-        return await manager.update(Comment, id, comment);
-      });
+      return await this.commentManager.manager.transaction(async (manager) => {});
     } catch (e) {
       throw new HttpException(e.message || e.toString(), HttpStatus.BAD_REQUEST);
     }
