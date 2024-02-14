@@ -27,4 +27,8 @@ export class QueryBaseDto {
   relations?: string[];
 
   where?: any;
+
+  // 是否是模糊查询
+  @Optional()
+  like?: boolean;
 }

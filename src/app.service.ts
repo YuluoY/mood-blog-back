@@ -76,6 +76,7 @@ export class AppService {
           });
           res.on('end', () => {
             const pos = JSON.parse(data || '{}') as IBaiduMapPosition;
+            console.log(pos);
             const res = {
               address: pos?.address,
               country: '',

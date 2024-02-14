@@ -33,6 +33,7 @@ export class Visitor extends CustomBaseEntity {
     type: 'varchar',
     length: 255,
     comment: '来源地址',
+    default: '未知',
     nullable: true
   })
   address: string;
@@ -41,6 +42,7 @@ export class Visitor extends CustomBaseEntity {
     type: 'varchar',
     length: 100,
     comment: '国家',
+    default: '未知',
     nullable: true
   })
   country: string;
@@ -49,6 +51,7 @@ export class Visitor extends CustomBaseEntity {
     type: 'varchar',
     length: 100,
     comment: '省份',
+    default: '未知',
     nullable: true
   })
   province: string;
@@ -57,6 +60,7 @@ export class Visitor extends CustomBaseEntity {
     type: 'varchar',
     length: 100,
     comment: '城市',
+    default: '未知',
     nullable: true
   })
   city: string;
@@ -65,6 +69,7 @@ export class Visitor extends CustomBaseEntity {
     type: 'varchar',
     length: 100,
     comment: '地区',
+    default: '未知',
     nullable: true
   })
   district: string;
@@ -73,6 +78,7 @@ export class Visitor extends CustomBaseEntity {
     type: 'varchar',
     length: 255,
     comment: '街道',
+    default: '未知',
     nullable: true
   })
   street: string;

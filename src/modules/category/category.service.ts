@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from '@/modules/category/entities/category.entity';
 import { ArticleService } from '@/modules/article/article.service';
 import { QueryCategoryDto } from '@/modules/category/dto/query-category.dto';
-import { QueryFilter } from '@/global/QueryFilter';
+import { QueryUtil } from '@/global/QueryFilter';
 
 @Injectable()
 export class CategoryService {
@@ -33,7 +33,7 @@ export class CategoryService {
   }
 
   async findAll(query: QueryCategoryDto) {
-    return await this.categoryRepository.find(QueryFilter.findManyOptionsFilter(query));
+    return await this.categoryRepository.find(QueryUtil.findManyOptionsFilter(query));
   }
 
   async findOne(unique: QueryCategoryDto) {

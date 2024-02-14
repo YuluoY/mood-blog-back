@@ -1,5 +1,5 @@
 import { EnumStatus } from '@/types/user';
-import { IsNotEmpty, IsNumber, IsNumberString, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 import { Tag } from '@/modules/tag/entities/tag.entity';
 import { Comment } from '@/modules/comment/entities/comment.entity';
 import { Category } from '@/modules/category/entities/category.entity';
@@ -27,6 +27,12 @@ export class CreateArticleDto {
 
   @IsNumber()
   words: number;
+
+  @IsOptional()
+  isOriginal: boolean;
+
+  @IsOptional()
+  isComment: boolean;
 
   userId: User;
 

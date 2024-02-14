@@ -42,6 +42,7 @@ export class CommentController {
   }
 
   @Get('pagination/:page/:limit')
+  @Public()
   async pagination(@Param('page') page: number, @Param('limit') limit: number, @Query() query: QueryCommentDto) {
     return await this.commentService.pagination(page, limit, query);
   }

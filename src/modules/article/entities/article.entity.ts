@@ -72,6 +72,20 @@ export class Article extends CustomBaseEntity {
   })
   isRecommend: boolean;
 
+  @Column({
+    type: 'boolean',
+    comment: '是否原创',
+    default: true
+  })
+  isOriginal: boolean;
+
+  @Column({
+    type: 'boolean',
+    comment: '是否开启评论区',
+    default: true
+  })
+  isComment: boolean;
+
   @ManyToOne(() => User, { cascade: true })
   user: User;
 

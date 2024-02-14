@@ -5,7 +5,7 @@ import { FindManyOptions, FindOptions, Repository } from 'typeorm';
 import { Tag } from '@/modules/tag/entities/tag.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryTagDto } from '@/modules/tag/dto/query-tag.dto';
-import { QueryFilter } from '@/global/QueryFilter';
+import { QueryUtil } from '@/global/QueryFilter';
 
 @Injectable()
 export class TagService {
@@ -22,7 +22,7 @@ export class TagService {
   }
 
   async findAll(queryTagDto: QueryTagDto) {
-    return await this.tagManager.find(QueryFilter.findManyOptionsFilter(queryTagDto));
+    return await this.tagManager.find(QueryUtil.findManyOptionsFilter(queryTagDto));
   }
 
   async findOne(id: string, updateTagDto?: UpdateTagDto) {

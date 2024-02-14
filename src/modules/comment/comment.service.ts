@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Query } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { QueryCommentDto } from '@/modules/comment/dto/query-comment.dto';
@@ -8,6 +8,8 @@ import { Comment } from '@/modules/comment/entities/comment.entity';
 import { User } from '@/modules/user/entities/user.entity';
 import { Visitor } from '@/modules/visitor/entities/visitor.entity';
 import { Article } from '@/modules/article/entities/article.entity';
+import { QueryUtil } from '@/global/QueryFilter';
+import { EnumDatabaseTableName } from '@/types/core';
 
 @Injectable()
 export class CommentService {
@@ -74,12 +76,24 @@ export class CommentService {
   }
 
   async pagination(page: number, limit: number, query: QueryCommentDto) {
-    const [list, total] = await this.commentManager.findAndCount({
-      where: query,
-      relations: ['user', 'article'],
-      take: limit,
-      skip: (page - 1) * limit
-    });
+    const qb = this.commentManager.createQueryBuilder('comment');
+
+    // const filterRelations = ['user', 'article', 'parent', 'visitor'];
+    QueryUtil.leftJoinAndSelects(qb, EnumDatabaseTableName.Comment, query.relations);
+    QueryUtil.filterRelationsById(qb, EnumDatabaseTableName.Comment, query.relations, query);
+
+    const filterCommon = ['status', 'isTop', 'isSubscribe', 'qq'];
+    QueryUtil.filterCommon(qb, filterCommon, query);
+
+    const filterLike = ['content', 'nickname'];
+    QueryUtil.filterLike(qb, EnumDatabaseTableName.Comment, filterLike, query);
+
+    const [list, total] = await qb
+      .take(limit)
+      .skip((page - 1) * limit)
+      .orderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
+      .orderBy('comment.isTop', 'DESC')
+      .getManyAndCount();
     return {
       list,
       total,
