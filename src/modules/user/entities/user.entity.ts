@@ -82,6 +82,62 @@ export class User extends CustomBaseEntity {
   bio?: string;
 
   @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '操作系统型号',
+    default: '未知'
+  })
+  windowsOS?: string;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '浏览器型号',
+    default: '未知'
+  })
+  browser?: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    comment: '国家',
+    default: '未知'
+  })
+  country?: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    comment: '省份',
+    default: '未知'
+  })
+  province?: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    comment: '城市',
+    default: '未知'
+  })
+  city?: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    comment: '地区',
+    default: '未知'
+  })
+  district?: string;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '街道',
+    default: '未知'
+  })
+  street?: string;
+
+  @Column({
     type: 'enum',
     enum: EnumRole,
     comment: '用户角色',

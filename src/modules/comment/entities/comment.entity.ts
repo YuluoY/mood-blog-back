@@ -1,7 +1,7 @@
 import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { Article } from '@/modules/article/entities/article.entity';
 import { EnumDatabaseTableName } from '@/types/core';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { Like } from '@/modules/like/entities/like.entity';
 import { User } from '@/modules/user/entities/user.entity';
 import { AppConfig } from '@/config';
@@ -70,23 +70,25 @@ export class Comment extends CustomBaseEntity {
   })
   isTop: boolean;
 
-  @ManyToOne(() => Visitor, { cascade: true })
+  @OneToOne(() => Comment, () => null, { nullable: true })
+  @JoinColumn()
+  reply: this;
+
+  @ManyToOne(() => Visitor)
   visitor: Visitor;
 
-  @ManyToOne(() => User, { cascade: true })
+  @ManyToOne(() => User)
   user: User;
 
   @ManyToOne(() => Article, (Article) => Article.comments)
   article: Article;
 
-  @OneToMany(() => Like, (Like) => Like.comment, { cascade: true })
+  @OneToMany(() => Like, (Like) => Like.comment)
   likes: Like[];
 
-  @ManyToOne(() => Comment, (Comment) => Comment.children)
-  // eslint-disable-next-line no-use-before-define
-  parent: Comment;
+  @ManyToOne(() => Comment, (Comment) => Comment.children, { nullable: true })
+  parent: this;
 
-  @OneToMany(() => Comment, (Comment) => Comment.parent)
-  // eslint-disable-next-line no-use-before-define
-  children: Comment[];
+  @OneToMany(() => Comment, (Comment) => Comment.parent, { cascade: true })
+  children: this[];
 }

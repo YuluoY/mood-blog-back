@@ -17,8 +17,7 @@ export class CreateCommentDto {
   email: string;
 
   @IsOptional()
-  @IsUrl({}, { message: '网址格式不正确' })
-  website: string;
+  website?: string;
 
   @IsOptional()
   isSubscribe: boolean;
@@ -31,6 +30,9 @@ export class CreateCommentDto {
 
   @IsOptional()
   isTop: boolean;
+
+  @IsOptional()
+  reply: Comment;
 
   @IsOptional()
   visitor: Visitor;

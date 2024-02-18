@@ -35,10 +35,7 @@ export class CommentService {
         }
         if (parent && parent.id) {
           $Comment.parent = await manager.findOne(Comment, { where: { id: parent.id } });
-          // 找到父级的评论后将这个comment push到父级评论的children中
-          $Comment.parent.children.push($Comment);
         }
-        console.log($Comment);
         return await manager.save($Comment);
       });
     } catch (e) {
@@ -77,9 +74,15 @@ export class CommentService {
 
   async pagination(page: number, limit: number, query: QueryCommentDto) {
     const qb = this.commentManager.createQueryBuilder('comment');
+    qb.leftJoinAndSelect('comment.user', 'user');
+    // 让children中的Comment的关联关系也能被查询出来
+    qb.leftJoinAndSelect('comment.children', 'children');
+    qb.leftJoinAndSelect('comment.visitor', 'visitor');
+    qb.leftJoinAndSelect('comment.article', 'article');
+    // 这样子查询出来的comment中的children也会有关联关系
+    qb.leftJoinAndSelect('comment.parent', 'parent');
 
-    // const filterRelations = ['user', 'article', 'parent', 'visitor'];
-    QueryUtil.leftJoinAndSelects(qb, EnumDatabaseTableName.Comment, query.relations);
+    // QueryUtil.leftJoinAndSelects(qb, EnumDatabaseTableName.Comment, query.relations);
     QueryUtil.filterRelationsById(qb, EnumDatabaseTableName.Comment, query.relations, query);
 
     const filterCommon = ['status', 'isTop', 'isSubscribe', 'qq'];
@@ -91,8 +94,9 @@ export class CommentService {
     const [list, total] = await qb
       .take(limit)
       .skip((page - 1) * limit)
-      .orderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
+      .where('comment.parent is null')
       .orderBy('comment.isTop', 'DESC')
+      .addOrderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
       .getManyAndCount();
     return {
       list,
