@@ -74,16 +74,14 @@ export class CommentService {
 
   async pagination(page: number, limit: number, query: QueryCommentDto) {
     const qb = this.commentManager.createQueryBuilder('comment');
-    qb.leftJoinAndSelect('comment.user', 'user');
-    // 让children中的Comment的关联关系也能被查询出来
-    qb.leftJoinAndSelect('comment.children', 'children');
-    qb.leftJoinAndSelect('comment.visitor', 'visitor');
-    qb.leftJoinAndSelect('comment.article', 'article');
-    // 这样子查询出来的comment中的children也会有关联关系
-    qb.leftJoinAndSelect('comment.parent', 'parent');
 
-    // QueryUtil.leftJoinAndSelects(qb, EnumDatabaseTableName.Comment, query.relations);
+    query.relations.push(...['parent', 'children']);
+
+    QueryUtil.leftJoinAndSelects(qb, EnumDatabaseTableName.Comment, query.relations);
     QueryUtil.filterRelationsById(qb, EnumDatabaseTableName.Comment, query.relations, query);
+
+    qb.leftJoinAndSelect('children.parent', 'childrenParent');
+    qb.leftJoinAndSelect('children.reply', 'childrenReply');
 
     const filterCommon = ['status', 'isTop', 'isSubscribe', 'qq'];
     QueryUtil.filterCommon(qb, filterCommon, query);
@@ -91,13 +89,18 @@ export class CommentService {
     const filterLike = ['content', 'nickname'];
     QueryUtil.filterLike(qb, EnumDatabaseTableName.Comment, filterLike, query);
 
-    const [list, total] = await qb
+    qb.orderBy('comment.isTop', 'DESC')
+      .addOrderBy(`children.${query.sort || 'createdAt'}`, query.order || 'ASC')
+      .addOrderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
+      .addOrderBy('children.isTop', 'DESC');
+
+    const total = await qb.getCount();
+    const list = await qb
       .take(limit)
       .skip((page - 1) * limit)
       .where('comment.parent is null')
-      .orderBy('comment.isTop', 'DESC')
-      .addOrderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
-      .getManyAndCount();
+      .getMany();
+
     return {
       list,
       total,

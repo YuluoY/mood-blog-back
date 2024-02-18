@@ -1,5 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
-import { Optional } from '@nestjs/common';
+import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { User } from '@/modules/user/entities/user.entity';
 import { Article } from '@/modules/article/entities/article.entity';
 import { Visitor } from '@/modules/visitor/entities/visitor.entity';
@@ -32,6 +31,9 @@ export class CreateCommentDto {
   isTop: boolean;
 
   @IsOptional()
+  isAuthorLike: boolean;
+
+  @IsOptional()
   reply: Comment;
 
   @IsOptional()
@@ -40,9 +42,9 @@ export class CreateCommentDto {
   @IsOptional()
   user: User;
 
-  @Optional()
+  @IsOptional()
   article: Article;
 
-  @Optional()
+  @IsOptional()
   parent: Comment;
 }

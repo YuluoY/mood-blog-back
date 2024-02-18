@@ -70,6 +70,13 @@ export class Comment extends CustomBaseEntity {
   })
   isTop: boolean;
 
+  @Column({
+    type: 'boolean',
+    comment: '作者是否赞过',
+    default: false
+  })
+  isAuthorLike: boolean;
+
   @OneToOne(() => Comment, () => null, { nullable: true })
   @JoinColumn()
   reply: this;
