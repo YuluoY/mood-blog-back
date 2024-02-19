@@ -108,35 +108,38 @@ export class ArticleService {
 
   async pagination(page: number, limit: number, query: Partial<QueryFindManyOptions<Article>>) {
     const qb = this.articleManager.createQueryBuilder('article');
+
     qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect('article.category', 'category');
     qb.leftJoinAndSelect('article.user', 'user');
-    qb.leftJoinAndSelect('article.likes', 'like');
-    qb.leftJoinAndSelect('article.views', 'view');
-    qb.leftJoinAndSelect('article.comments', 'comment');
+    // qb.leftJoinAndSelect('article.likes', 'like');
+    // qb.leftJoinAndSelect('article.views', 'view');
+    // qb.leftJoinAndSelect('article.comments', 'comment');
 
-    console.log(query);
+    // 添加其他条件
     if (query?.where?.status) {
-      qb.where('article.status = :status', { status: query.where.status });
+      qb.andWhere('article.status = :status', { status: query.where.status });
     }
     if (query?.where?.tags?.length) {
-      // 查找tags里面包含的文章，并且将文章的tags也查出来，并返回此文章下的所有tags
       qb.andWhere('tag.tagName IN (:...tagName)', { tagName: query.where.tags });
     }
     if (query?.where?.category) {
-      qb.where('category.id = :id', { id: query.where.category });
+      qb.andWhere('category.id = :id', { id: query.where.category });
     }
     if (query?.withDeleted) {
       qb.withDeleted();
     }
     if (query?.where?.title) {
-      qb.where('article.title like :title', { title: `%${query.where.title}%` });
+      qb.andWhere('article.title like :title', { title: `%${query.where.title}%` });
     }
     if (query?.sort) {
       qb.orderBy(`article.${query.sort}`, query.order || 'DESC');
     }
+
     const [list, total] = await qb
-      .leftJoinAndSelect('article.tags', 'allTags')
+      .loadRelationCountAndMap('article.commentCount', 'article.comments')
+      .loadRelationCountAndMap('article.likeCount', 'article.likes')
+      .loadRelationCountAndMap('article.viewCount', 'article.views')
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();

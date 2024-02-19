@@ -41,6 +41,7 @@ export class TagController {
   }
 
   @Get('pagination/:page/:limit')
+  @Public()
   pagination(@Param('page') page: number, @Param('limit') limit: number, @Query() query: QueryTagDto) {
     return this.tagService.pagination(page, limit, query);
   }

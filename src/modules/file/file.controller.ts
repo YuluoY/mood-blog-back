@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { FileService } from './file.service';
 import { UpdateFileDto } from './dto/update-file.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { IParseToken } from '@/types/core';
 import { Request } from 'express';
 import { AppConfig } from '@/config';
@@ -27,6 +27,7 @@ export class FileController {
     })
   )
   async localCreate(@UploadedFile() file: Express.Multer.File, @Req() request: Request & { user: IParseToken }) {
+    console.log(file, 'file');
     return await this.fileService.localCreate(file, {
       userId: request.user.id,
       filePath: request.body.filePath,

@@ -77,7 +77,7 @@ export class Comment extends CustomBaseEntity {
   })
   isAuthorLike: boolean;
 
-  @OneToOne(() => Comment, () => null, { nullable: true })
+  @ManyToOne(() => Comment, (Comment) => Comment.reply, { nullable: true })
   @JoinColumn()
   reply: this;
 

@@ -21,7 +21,7 @@ export class CommentService {
   async create(createCommentDto: CreateCommentDto) {
     try {
       return await this.commentManager.manager.transaction(async (manager) => {
-        const { user, article, parent, visitor } = createCommentDto;
+        const { user, article, parent, visitor, reply } = createCommentDto;
         const $Comment = manager.create(Comment);
         Object.assign($Comment, createCommentDto);
         if (user && user.id) {
@@ -35,6 +35,9 @@ export class CommentService {
         }
         if (parent && parent.id) {
           $Comment.parent = await manager.findOne(Comment, { where: { id: parent.id } });
+        }
+        if (reply && reply.id) {
+          $Comment.reply = await manager.findOne(Comment, { where: { id: reply.id } });
         }
         return await manager.save($Comment);
       });
@@ -89,21 +92,31 @@ export class CommentService {
     const filterLike = ['content', 'nickname'];
     QueryUtil.filterLike(qb, EnumDatabaseTableName.Comment, filterLike, query);
 
-    qb.orderBy('comment.isTop', 'DESC')
-      .addOrderBy(`children.${query.sort || 'createdAt'}`, query.order || 'ASC')
-      .addOrderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
-      .addOrderBy('children.isTop', 'DESC');
-
     const total = await qb.getCount();
-    const list = await qb
-      .take(limit)
+
+    const [list, rawTotal] = await qb
+      .take(+limit)
       .skip((page - 1) * limit)
       .where('comment.parent is null')
-      .getMany();
+      .addOrderBy('comment.isTop', 'DESC')
+      .addOrderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
+      .getManyAndCount();
+
+    // 处理children排序
+    list.forEach((item) => {
+      item.children = item.children.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      // 如果children 中有isTop为true，将该评论位置提前到children数组最前面
+      const topIndex = item.children.findIndex((child) => child.isTop);
+      if (topIndex !== -1) {
+        const topItem = item.children.splice(topIndex, 1);
+        item.children = topItem.concat(item.children);
+      }
+    });
 
     return {
       list,
       total,
+      rawTotal,
       page: +page,
       limit: +limit
     };
