@@ -5,6 +5,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { IParseToken } from '@/types/core';
 import { Request } from 'express';
 import { AppConfig } from '@/config';
+import { Public } from '@/decorator/Public';
 
 @Controller('file')
 export class FileController {
@@ -27,12 +28,16 @@ export class FileController {
     })
   )
   async localCreate(@UploadedFile() file: Express.Multer.File, @Req() request: Request & { user: IParseToken }) {
-    console.log(file, 'file');
     return await this.fileService.localCreate(file, {
       userId: request.user.id,
       filePath: request.body.filePath,
       localPath: request.body.localPath
     });
+  }
+  @Post('qiniuUpload')
+  @UseInterceptors(FileInterceptor('file'))
+  async upyunCreate(@UploadedFile() file: Express.Multer.File, @Req() request: Request & { user: IParseToken }) {
+    return await this.fileService.qiniuCreate(file, request.user.id);
   }
 
   @Post()

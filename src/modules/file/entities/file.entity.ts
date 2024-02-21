@@ -71,4 +71,11 @@ export class File extends CustomBaseEntity {
     nullable: true
   })
   bucket: string;
+
+  @Column({
+    type: 'jsonb',
+    comment: '云存储返回的数据',
+    nullable: true
+  })
+  cloudData: any;
 }

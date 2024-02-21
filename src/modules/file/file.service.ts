@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpServer, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,10 @@ import * as COS from 'cos-nodejs-sdk-v5';
 import { AppConfig } from '@/config';
 import { UserService } from '../user/user.service';
 import { unlink } from 'fs/promises';
+import * as qiniu from 'qiniu';
+import * as process from 'process';
+import { User } from '@/modules/user/entities/user.entity';
+import { QiniuService } from '@/global/QiniuService';
 
 @Injectable()
 export class FileService {
@@ -129,5 +133,33 @@ export class FileService {
 
   private removeFile(url: string) {
     return unlink(url);
+  }
+
+  async qiniuCreate(file: Express.Multer.File, userId: string) {
+    const qiniuService = new QiniuService();
+
+    const fileInfoArr = file.originalname.split('.');
+    const key = `image/${fileInfoArr[0]}-${Date.now()}.${fileInfoArr[1]}`;
+    const res = await qiniuService.put(key, file.buffer);
+
+    if (res.status === 200) {
+      const { size, unit } = this.processFileUnit(file.size);
+      const File = this.fileManager.create();
+      File.fieldname = file.fieldname;
+      File.originalname = file.originalname;
+      File.mimetype = file.mimetype;
+      File.encoding = file.encoding;
+      File.size = size + unit;
+      File.url = res.url;
+      File.key = key;
+      File.bucket = qiniuService.bucket;
+      File.cloudData = JSON.stringify(res.raw);
+      File.user = await this.fileManager.manager.findOne(User, { where: { id: userId } });
+      const newFile = await this.fileManager.save(File);
+      if (!newFile) {
+        await qiniuService.remove(key);
+      }
+      return res.url;
+    }
   }
 }

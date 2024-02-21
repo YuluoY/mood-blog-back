@@ -1,5 +1,3 @@
-import { Optional } from '@nestjs/common';
 import { QueryBaseDto } from '@/global/QueryBaseDto';
-import { IsString } from 'class-validator';
 
-export class QueryCommentDto extends QueryBaseDto {}
+export class QueryCommentDto<T = any> extends QueryBaseDto<T> {}

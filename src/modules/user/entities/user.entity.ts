@@ -3,6 +3,7 @@ import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { EnumDatabaseTableName, IUserSocializes } from 'src/types/core';
 import { EnumRole, EnumStatus } from 'src/types/user';
 import { Column, Entity, Index } from 'typeorm';
+import { Length } from 'class-validator';
 
 @Entity(EnumDatabaseTableName.User)
 export class User extends CustomBaseEntity {
@@ -20,6 +21,9 @@ export class User extends CustomBaseEntity {
     select: false,
     comment: '密码',
     nullable: false
+  })
+  @Length(6, 20, {
+    message: '密码长度为6-20位'
   })
   password: string;
 

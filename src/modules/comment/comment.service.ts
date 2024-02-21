@@ -75,7 +75,7 @@ export class CommentService {
     return await this.commentManager.restore(id);
   }
 
-  async pagination(page: number, limit: number, query: QueryCommentDto) {
+  async pagination(page: number, limit: number, query: QueryCommentDto<Comment>) {
     const qb = this.commentManager.createQueryBuilder('comment');
 
     query.relations.push(...['parent', 'children']);
@@ -92,12 +92,17 @@ export class CommentService {
     const filterLike = ['content', 'nickname'];
     QueryUtil.filterLike(qb, EnumDatabaseTableName.Comment, filterLike, query);
 
+    console.log('query.where?.article', query.where?.article);
+    if (query.where?.article) {
+      qb.andWhere('comment.article.id = :articleId', { articleId: query.where.article.id });
+    }
+
     const total = await qb.getCount();
 
     const [list, rawTotal] = await qb
       .take(+limit)
       .skip((page - 1) * limit)
-      .where('comment.parent is null')
+      .andWhere('comment.parent is null')
       .addOrderBy('comment.isTop', 'DESC')
       .addOrderBy(`comment.${query.sort || 'createdAt'}`, query.order || 'ASC')
       .getManyAndCount();

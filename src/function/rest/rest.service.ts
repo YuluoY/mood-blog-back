@@ -7,6 +7,11 @@ export class RestService {
   constructor(private readonly entityManager: EntityManager) {}
 
   async findOne(module: any) {
-    return await this.entityManager.getRepository(module).find();
+    return await this.entityManager.getRepository(module).find({
+      // 根据创建时间倒序
+      order: {
+        createdAt: 'DESC'
+      }
+    });
   }
 }

@@ -1,7 +1,7 @@
 import { IsOptional } from 'class-validator';
 import { Optional } from '@nestjs/common';
 
-export class QueryBaseDto {
+export class QueryBaseDto<T = any> {
   @IsOptional()
   id: string;
 
@@ -26,7 +26,7 @@ export class QueryBaseDto {
   @Optional()
   relations?: string[];
 
-  where?: any;
+  where?: T;
 
   // 是否是模糊查询
   @Optional()
