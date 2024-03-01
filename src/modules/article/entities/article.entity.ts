@@ -89,7 +89,7 @@ export class Article extends CustomBaseEntity {
   @ManyToOne(() => User, { cascade: true })
   user: User;
 
-  @ManyToMany(() => Tag, (Tag) => Tag.article, { onDelete: 'NO ACTION' })
+  @ManyToMany(() => Tag, (Tag) => Tag.article, { cascade: true })
   @JoinTable()
   tags: Tag[];
 
@@ -100,7 +100,7 @@ export class Article extends CustomBaseEntity {
   @OneToMany(() => Like, (Like) => Like.article, { cascade: true })
   likes: Like[];
 
-  @ManyToOne(() => Category, (Category) => Category.article)
+  @ManyToOne(() => Category, (Category) => Category.article, { cascade: true })
   @JoinTable()
   category: Category;
 

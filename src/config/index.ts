@@ -76,7 +76,7 @@ export const AppConfig: IAppConfig = {
     retryDelay: 500,
     retryAttempts: 1,
     autoLoadEntities: true,
-    logging: true,
+    // logging: false,
     // logger: new CustomLogger(),
     // timezone: 'Asia/Shanghai',
     maxQueryExecutionTime: 1

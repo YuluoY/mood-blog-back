@@ -1,7 +1,8 @@
 import { CustomBaseEntity } from '@/global/CustomBaseEntity';
 import { Article } from '@/modules/article/entities/article.entity';
 import { EnumDatabaseTableName } from '@/types/core';
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { BeforeSoftRemove, Column, Entity, getRepository, ManyToMany, OneToMany } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 @Entity(EnumDatabaseTableName.Category)
 export class Category extends CustomBaseEntity {
@@ -32,6 +33,6 @@ export class Category extends CustomBaseEntity {
   })
   cateColor: string;
 
-  @OneToMany(() => Article, (Article) => Article.category, { cascade: true })
+  @OneToMany(() => Article, (Article) => Article.category)
   article: Article[];
 }

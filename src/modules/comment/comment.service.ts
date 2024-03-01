@@ -77,7 +77,6 @@ export class CommentService {
 
   async pagination(page: number, limit: number, query: QueryCommentDto<Comment>) {
     const qb = this.commentManager.createQueryBuilder('comment');
-
     query.relations.push(...['parent', 'children']);
 
     QueryUtil.leftJoinAndSelects(qb, EnumDatabaseTableName.Comment, query.relations);
@@ -85,6 +84,7 @@ export class CommentService {
 
     qb.leftJoinAndSelect('children.parent', 'childrenParent');
     qb.leftJoinAndSelect('children.reply', 'childrenReply');
+    qb.leftJoinAndSelect('children.visitor', 'childrenVisitor');
 
     const filterCommon = ['status', 'isTop', 'isSubscribe', 'qq'];
     QueryUtil.filterCommon(qb, filterCommon, query);

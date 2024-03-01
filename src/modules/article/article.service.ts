@@ -112,21 +112,18 @@ export class ArticleService {
     qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect('article.category', 'category');
     qb.leftJoinAndSelect('article.user', 'user');
-    // qb.leftJoinAndSelect('article.likes', 'like');
-    // qb.leftJoinAndSelect('article.views', 'view');
-    // qb.leftJoinAndSelect('article.comments', 'comment');
 
     // 添加其他条件
     if (query?.where?.status) {
       qb.andWhere('article.status = :status', { status: query.where.status });
     }
     if (query?.where?.tags?.length) {
-      qb.andWhere('tag.tagName IN (:...tagName)', { tagName: query.where.tags });
+      qb.andWhere('tag.tagName IN (:...tagName)', { tagName: query.where.tags, deletedAt: null });
     }
     if (query?.where?.category) {
-      qb.andWhere('category.id = :id', { id: query.where.category });
+      qb.andWhere('category.id = :id', { id: query.where.category, deletedAt: null });
     }
-    if (query?.withDeleted) {
+    if (query?.withDeleted === 'true') {
       qb.withDeleted();
     }
     if (query?.where?.title) {

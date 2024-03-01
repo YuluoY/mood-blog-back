@@ -39,5 +39,5 @@ export class QueryFindManyOptions<T> {
 
   @IsOptional()
   @IsBooleanString()
-  withDeleted: boolean;
+  withDeleted: string;
 }

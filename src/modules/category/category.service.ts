@@ -7,6 +7,7 @@ import { Category } from '@/modules/category/entities/category.entity';
 import { ArticleService } from '@/modules/article/article.service';
 import { QueryCategoryDto } from '@/modules/category/dto/query-category.dto';
 import { QueryUtil } from '@/global/QueryFilter';
+import { Article } from '@/modules/article/entities/article.entity';
 
 @Injectable()
 export class CategoryService {
@@ -51,11 +52,17 @@ export class CategoryService {
     if (force) {
       return await this.categoryRepository.delete(id);
     } else {
+      const articleRepo = this.categoryRepository.manager.getRepository(Article);
+      // 将这个分类下的所有文章的deletedAt字段设置为当前时间
+      await articleRepo.update({ category: id as any }, { deletedAt: new Date() });
       return await this.categoryRepository.softDelete(id);
     }
   }
 
   async restore(id: string | string[]) {
+    const articleRepo = this.categoryRepository.manager.getRepository(Article);
+    // 将这个分类下的所有文章的deletedAt字段设置为null
+    await articleRepo.update({ category: id as any }, { deletedAt: null });
     return await this.categoryRepository.restore(id);
   }
 }

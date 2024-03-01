@@ -4,7 +4,6 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { EnumDatabaseTableName } from '@/types/core';
 import { QueryCategoryDto } from '@/modules/category/dto/query-category.dto';
-import { QueryTagDto } from '@/modules/tag/dto/query-tag.dto';
 import { Public } from '@/decorator/Public';
 
 @Controller(EnumDatabaseTableName.Category)
@@ -18,7 +17,7 @@ export class CategoryController {
 
   @Get('all')
   @Public()
-  async findAll(@Param('query') query: QueryCategoryDto) {
+  async findAll(@Query() query: QueryCategoryDto) {
     return await this.categoryService.findAll(query);
   }
 
